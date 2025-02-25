@@ -1,0 +1,30 @@
+   /* should print 3  8   16.0   17.0  18.0 (or 19.0 if RTOI rounds up) */    
+float a, b;
+int i, j;
+
+{
+   a = 3.2;
+   j = 8;
+   
+   i = (int)a;
+   write(i);
+   
+   i = (int) j;
+   write(i);
+   
+   i = 16;
+   a = (float)i;
+   write(a);
+   
+   b = 17.0;
+   
+   a = (float)(b);
+   
+   write(a);
+   
+   b = 18.9;
+   a = (int) b;
+   
+   write(a);
+
+}
