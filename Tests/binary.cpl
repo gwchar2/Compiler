@@ -1,17 +1,17 @@
 /*convert from decimal to binary */
 
-int a, b;
-int temp, ten;
+a, b : int;
+temp, ten : int;
 
 {
 
     b = 0;
 
     while (b == 0) {
-       read (a);
-       if(a > 0 && a <= 1000) 
-	       b = 1;
-       else { }
+        input (a);
+        if(a > 0 && a <= 1000)
+            b = 1;
+        else { }
     }
 
     ten = 1;
@@ -23,6 +23,6 @@ int temp, ten;
         ten = ten * 10;
         a = a / 2;
     }
-    write(b);
+    output(b);
 
  }

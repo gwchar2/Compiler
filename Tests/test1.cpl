@@ -1,0 +1,9 @@
+mine33, mine34 : int;
+{
+    mine33 = 3;
+    mine34 = 4;
+    mine35 = 4;
+    while (!(x < 5)) {
+        y = 5;
+    }
+}

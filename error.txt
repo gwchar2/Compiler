@@ -1,0 +1,92 @@
+Running test on Tests/andor.cpl
+Symbol Table:
+Parsing successful!
+------------------------------
+Running test on Tests/binary.cpl
+Symbol Table:
+  ten : int
+  temp : int
+  b : int
+  a : int
+Parsing successful!
+------------------------------
+Running test on Tests/cast.cpl
+Symbol Table:
+  j : int
+  i : int
+  b : float
+  a : float
+Parsing successful!
+------------------------------
+Running test on Tests/cnv.cpl
+Symbol Table:
+  b : float
+  a : float
+  j : int
+  i : int
+Parsing successful!
+------------------------------
+Running test on Tests/div.cpl
+Symbol Table:
+  second : int
+  first : int
+  count : int
+Parsing successful!
+------------------------------
+Running test on Tests/fibo.cpl
+Symbol Table:
+  c : int
+  b : int
+  a : int
+Parsing successful!
+------------------------------
+Running test on Tests/min.cpl
+Symbol Table:
+  b : float
+  a : float
+Parsing successful!
+------------------------------
+Running test on Tests/primes.cpl
+Symbol Table:
+  stop : int
+  b : int
+  a : int
+Parsing successful!
+------------------------------
+Running test on Tests/sin.cpl
+Symbol Table:
+  sign : float
+  power : float
+  loopnum : float
+  prevsine : float
+  cursine : float
+  inp : float
+Parsing successful!
+------------------------------
+Running test on Tests/sqrt.cpl
+Symbol Table:
+  stop : int
+  delta : float
+  x : float
+  a : float
+Parsing successful!
+------------------------------
+Running test on Tests/test1.cpl
+Symbol Table:
+  mine34 : int
+  mine33 : int
+Parsing successful!
+------------------------------
+Running test on Tests/testinput.cpl
+Symbol Table:
+  sign : float
+  power : float
+  loopnum : float
+  prevsine : float
+  inp : float
+  cursine : float
+  stop : int
+  b : int
+  a : int
+Parsing successful!
+------------------------------
