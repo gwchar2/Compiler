@@ -39,7 +39,8 @@ typedef enum ActionType{
     LOGICAL_NOT,
 
     /* Actions */
-    ACTION_CAST,
+    ACTION_CASTINT,
+    ACTION_CASTFLOAT,
     ACTION_ASSIGN,
     INVALID = -1
 } ActionType;

@@ -15,7 +15,8 @@ MULOP     (\*|\/)
 OR        (\|\|)
 AND       (\&\&)
 NOT       (\!)
-CAST      (cast<int>|cast<float>)
+CAST_INT        (cast<int>)
+CAST_FLOAT      (cast<float>)
 ID        [a-zA-Z_][a-zA-Z0-9_]*
 WHITESPACE [ \t\r]+
 
@@ -127,8 +128,11 @@ WHITESPACE [ \t\r]+
 {NOT}         {
     yylval.op = LOGICAL_NOT; return NOT;
     }
-{CAST}        {
-    yylval.op = ACTION_CAST; return CAST;
+{CAST_INT}        {
+    yylval.op = ACTION_CASTINT; return CAST;
+    }
+{CAST_FLOAT}        {
+    yylval.op = ACTION_CASTFLOAT; return CAST;
     }
 {ID}          {
     yylval.strval = strdup(yytext); return ID;

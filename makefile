@@ -1,10 +1,12 @@
 # Compiler settings
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -g
-LDFLAGS = -L/C/msys64/usr/lib -lfl
-
+LDFLAGS = -L/C/msys64/usr/lib -lfl					
+# REMEMBER TO KEEP ONLY -lfl WHEN WE ARE HANDING IN THE PROJECT!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Directories
 SRC_DIR = src
+AST_DIR = $(SRC_DIR)/AST
 INCLUDE_DIR = include
 BUILD_DIR = build
 
@@ -12,16 +14,23 @@ BUILD_DIR = build
 TARGET = compiler.exe
 
 # Source files
-CPP_SRCS = $(SRC_DIR)/main.cpp \
+MAIN_CPP_SRCS  = $(SRC_DIR)/main.cpp \
            $(SRC_DIR)/functionHelpers.cpp \
            $(SRC_DIR)/errorHandler.cpp \
-		   $(SRC_DIR)/symbol_table.cpp
+		   $(SRC_DIR)/symbol_table.cpp 
+
+# AST Directories seperately
+AST_BASE_SRCS = $(wildcard $(AST_DIR)/Base/*.cpp)
+AST_CONTROL_SRCS = $(wildcard $(AST_DIR)/ControlFlow/*.cpp)
+AST_EXPR_SRCS = $(wildcard $(AST_DIR)/Expressions/*.cpp)
+AST_STMT_SRCS = $(wildcard $(AST_DIR)/Statements/*.cpp)
+
+# All Source files combined 
+CPP_SRCS = $(MAIN_CPP_SRCS) $(AST_BASE_SRCS) $(AST_CONTROL_SRCS) $(AST_EXPR_SRCS) $(AST_STMT_SRCS)				
 
 # Object files from C++ sources
-CPP_OBJS = $(BUILD_DIR)/main.o \
-           $(BUILD_DIR)/functionHelpers.o \
-           $(BUILD_DIR)/errorHandler.o \
-	       $(BUILD_DIR)/symbol_table.o
+CPP_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(CPP_SRCS))
+
 
 # Generated files
 PARSER_C = $(BUILD_DIR)/parser.tab.c
@@ -35,18 +44,17 @@ LEX_OBJ = $(BUILD_DIR)/lex.yy.o
 
 # All object files
 OBJS = $(CPP_OBJS) $(PARSER_OBJ) $(LEX_OBJ)
+CPP_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(CPP_SRCS))
+BUILD_DIRS = $(BUILD_DIR) $(BUILD_DIR)/AST/Base $(BUILD_DIR)/AST/ControlFlow \
+             $(BUILD_DIR)/AST/Expressions $(BUILD_DIR)/AST/Statements
 
 # Default target
 .PHONY: all clean rebuild run
 all: $(BUILD_DIR) $(INCLUDE_DIR) $(TARGET)
 
 # Create build directory if it doesn't exist
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
-# Create include directory if it doesn't exist
-$(INCLUDE_DIR):
-	mkdir -p $(INCLUDE_DIR)
+$(BUILD_DIRS):
+	mkdir -p $@
 
 # Generate parser first - it's needed by other files
 $(PARSER_C) $(PARSER_H): $(SRC_DIR)/parser.y | $(BUILD_DIR)
@@ -61,9 +69,10 @@ $(LEX_C): $(SRC_DIR)/lexer.l | $(BUILD_DIR)
 	flex -o $@ $<
 
 # Compile C++ files - they need the parser header
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(INCLUDE_PARSER_H) | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(INCLUDE_PARSER_H) | $(BUILD_DIRS)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
-
+	
 # Compile lexer
 $(LEX_OBJ): $(LEX_C) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
@@ -81,12 +90,15 @@ clean:
 	rm -f $(TARGET)
 	rm -f $(BUILD_DIR)/*.o $(BUILD_DIR)/*.c $(BUILD_DIR)/*.h
 	rm -f $(INCLUDE_DIR)/parser.tab.h
+	rm -rf $(BUILD_DIR)/AST/Base $(BUILD_DIR)/AST/ControlFlow \
+             $(BUILD_DIR)/AST/Expressions $(BUILD_DIR)/AST/Statements 
 
 # Rebuild
 rebuild: clean all
 
 # Run with a specific input file
-# make run FILE=my_input_file.txt
+# command: make run [FILE]
+# FILE=my_input_file.txt
 run: $(TARGET)
 	./$(TARGET) $(FILE)
 

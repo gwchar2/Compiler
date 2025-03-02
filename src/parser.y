@@ -1,6 +1,7 @@
 %code requires {
     #include "../include/header.h"
     #include "../include/symbol_table.h"
+    #include "../include/AST.h"
     extern int yylex(void);  // Ensure this matches your lexer function
     int yyerror(const char *s);
 }
@@ -54,15 +55,6 @@ idlist:
     }
     ;
 
-stmt_block:
-    '{' stmtlist '}'
-    ;
-
-stmtlist:
-    stmtlist stmt
-    | /* epsilon */
-    ;
-
 stmt:
     assignment_stmt
     | input_stmt
@@ -105,6 +97,15 @@ caselist:
 
 break_stmt:
     BREAK ';'
+    ;
+
+stmt_block:
+    '{' stmtlist '}'
+    ;
+
+stmtlist:
+    stmtlist stmt
+    | /* epsilon */
     ;
 
 boolexpr:
