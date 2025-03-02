@@ -6,7 +6,6 @@ extern FILE *yyin;
 int line_number = 1;
 int comment_nesting = 0;
 %}
-
 /* Macros to define regular expressions */
 %option noyywrap 
 RELOP     (\<=|\>=|\<|\>|\=\!|\=\=)
