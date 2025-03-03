@@ -1,11 +1,11 @@
 #include "../include/AST/Expressions/ASTCastExprNode.h"
 
 /* Constructor */
-ASTCastExprNode::ASTCastExprNode(CastType type, ASTNode* operand) :
+ASTCastExprNode::ASTCastExprNode(ActionType type, ASTNode* operand) :
     ASTNode(NodeType::CAST_EXPR), castType(type), operand(operand){}
 
 /* Returns the type of cast inflicted*/
-ASTCastExprNode::CastType ASTCastExprNode::getCastType() const {
+ActionType ASTCastExprNode::getCastType() const {
     return castType;
 }
 

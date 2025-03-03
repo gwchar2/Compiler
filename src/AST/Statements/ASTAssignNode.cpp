@@ -1,15 +1,15 @@
 #include "../include/AST/Statements/ASTAssignNode.h"
 
 
-ASTAssignNode::ASTAssignNode(ASTNode* left, ASTNode* right) : 
-    ASTNode(NodeType::ASSIGNMENT), left(left), right(right) {}
+ASTAssignNode::ASTAssignNode(const std::string& id, ASTNode* expression) : 
+    ASTNode(NodeType::ASSIGNMENT), id(id), expression(expression) {}
 
-ASTNode* ASTAssignNode::getLeft() const {
-    return left;
+const std::string& ASTAssignNode::getID() const {
+    return id;
 }
 
-ASTNode* ASTAssignNode::getRight() const {
-    return right;
+ASTNode* ASTAssignNode::getExpression() const {
+    return expression;
 }
 
 void ASTAssignNode::accept(ASTVisitor& visitor){

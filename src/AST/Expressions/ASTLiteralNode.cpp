@@ -1,24 +1,28 @@
 #include "../include/AST/Expressions/ASTLiteralNode.h"
 
 /* Constructors for int / float variable */
-ASTLiteralNode::ASTLiteralNode(LiteralType type, int intValue) :
-    ASTNode(NodeType::LITERAL), litType(type) {
-        value.intValue = intValue;
+ASTLiteralNode::ASTLiteralNode(int intValue) :
+    ASTNode(NodeType::LITERAL){
+        value = intValue;
     };
 
-ASTLiteralNode::ASTLiteralNode(LiteralType type, float floatValue) :
-    ASTNode(NodeType::LITERAL), litType(type) {
-        value.floatValue = floatValue;
+ASTLiteralNode::ASTLiteralNode(float floatValue) :
+    ASTNode(NodeType::LITERAL){
+        value = floatValue;
     };
-
-/* Returns literal type */
-ASTLiteralNode::LiteralType ASTLiteralNode::getLiteralType() const {
-    return litType;
-}
 
 /* Returns the value */
-ASTLiteralNode::LiteralValue ASTLiteralNode::getValue() const {
+std::variant<int, float> ASTLiteralNode::getValue() const {
     return value;
+}
+
+/* Type returners */
+bool ASTLiteralNode::isInt() const {
+    return std::holds_alternative<int>(value);
+}
+
+bool ASTLiteralNode::isFloat() const {
+    return std::holds_alternative<float>(value);
 }
 
 /* Visitor */

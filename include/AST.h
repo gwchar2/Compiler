@@ -3,6 +3,7 @@
 
 #include "AST/Base/ASTNode.h"
 #include "AST/Base/ASTVisitor.h"
+#include "AST/Base/ASTProgramRoot.h"
 
 #include "AST/Expressions/ASTBinaryExprNode.h"
 #include "AST/Expressions/ASTUnaryExprNode.h"

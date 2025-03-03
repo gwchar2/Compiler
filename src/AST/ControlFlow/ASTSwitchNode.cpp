@@ -1,7 +1,7 @@
 #include "../include/AST/ControlFlow/ASTSwitchNode.h"
 
 /* Constructor */
-ASTSwitchNode::ASTSwitchNode(ASTNode* condition, ASTCaseListNode* caseList, ASTStatementListNode* defaultCase, int break_address) : 
+ASTSwitchNode::ASTSwitchNode(ASTNode* condition, ASTCaseListNode* caseList, ASTStatementListNode* defaultCase) : 
     ASTNode(NodeType::SWITCH_STMT), condition(condition), caseList(caseList), defaultCase(defaultCase), break_address(-1){}
 
 void ASTSwitchNode::accept(ASTVisitor& visitor) {

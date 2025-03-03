@@ -11,7 +11,7 @@ Holds Type of Node, Virtual Destructor, and an 'accept' class that must be imple
 class ASTNode {
     public:
         enum class NodeType {
-            LITERAL, IDENTIFIER, BINARY_EXPR, UNARY_EXPR, CAST_EXPR,
+            ROOT, LITERAL, IDENTIFIER, BINARY_EXPR, UNARY_EXPR, CAST_EXPR,
             ASSIGNMENT, INPUT, OUTPUT, IF_STMT, WHILE_STMT, SWITCH_STMT, BREAK_STMT, BLOCK, STATEMENT_LIST,CASE_LIST
         };
 

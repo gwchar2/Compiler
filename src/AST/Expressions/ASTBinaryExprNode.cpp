@@ -1,10 +1,9 @@
 #include "../include/AST/Expressions/ASTBinaryExprNode.h"
 
-ASTBinaryExprNode::ASTBinaryExprNode(BinaryOp op, ASTNode* left, ASTNode* right):
+ASTBinaryExprNode::ASTBinaryExprNode(ActionType op, ASTNode* left, ASTNode* right):
     ASTNode(NodeType::BINARY_EXPR),op(op),left(left),right(right){}
 
-
-ASTBinaryExprNode::BinaryOp ASTBinaryExprNode::getOperator() const {
+ActionType ASTBinaryExprNode::getOperator() const {
     return op;
 }
 

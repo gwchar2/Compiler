@@ -1,7 +1,7 @@
 #include "../include/AST/ControlFlow/ASTIfNode.h"
 
 
-
+/* Constructor */
 ASTIfNode::ASTIfNode(ASTNode* condition, ASTNode* mainBlock, ASTNode* elseBlock) :
     ASTNode(NodeType::IF_STMT), condition(condition), mainBlock(mainBlock), elseBlock(elseBlock){}
 

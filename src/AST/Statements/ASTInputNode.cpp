@@ -2,13 +2,13 @@
 
 
 /* Constructor */
-ASTInputNode::ASTInputNode(ASTNode* identifier) : 
-    ASTNode(NodeType::INPUT), identifier(identifier){}
+ASTInputNode::ASTInputNode(const std::string& id) : 
+    ASTNode(NodeType::INPUT), id(id){}
 
 
 /* Gets the id / variable in the input */
-ASTNode* ASTInputNode::getIdentifier() const {
-    return identifier;
+const std::string& ASTInputNode::getID() const {
+    return id;
 }
 
 /* Visitor */

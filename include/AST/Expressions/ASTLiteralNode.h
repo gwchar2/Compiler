@@ -3,26 +3,21 @@
 
 #include "../Base/ASTNode.h"
 #include "../Base/ASTVisitor.h"
+#include <variant>
 
 /* Represents a Literal Node */
 class ASTLiteralNode : public ASTNode {
     public:
-        enum class LiteralType { INT, FLOAT };                  // Literal Type
-        typedef union {                                         // Literal value typedef
-            int intValue;
-            float floatValue;
-        } LiteralValue; 
-
-        ASTLiteralNode(LiteralType litType, int value);         // Constructor1
-        ASTLiteralNode(LiteralType litType, float value);       // Constructor2
+        ASTLiteralNode(int value);         // Constructor1
+        ASTLiteralNode(float value);        // Constructor2
         void accept(ASTVisitor& visitor) override;
 
-        LiteralType getLiteralType() const;                     // Gets the type of the Literal
-        LiteralValue getValue() const;                                 // Gets the value of the Literal
-
+        std::variant<int, float> getValue() const;
+        bool isInt() const;
+        bool isFloat() const;
     private:
-        LiteralType litType;                                    // Holds the type of literal (Int or float)
-        LiteralValue value;                                     // Holds the value of the literal
+        std::variant<int, float> value;                                     // Holds the value of the literal
+
 };
 
 

@@ -22,7 +22,7 @@ caselist:
 class ASTSwitchNode : public ASTNode {
     public:
         //Constructor
-        ASTSwitchNode(ASTNode* condition, ASTCaseListNode* caseList, ASTStatementListNode* defaultCase, int break_address);
+        ASTSwitchNode(ASTNode* condition, ASTCaseListNode* caseList, ASTStatementListNode* defaultCase);
         
         void accept(ASTVisitor& visitor) override;  // Visitor constructor
 

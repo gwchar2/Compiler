@@ -12,7 +12,7 @@ while_stmt:
 
 class ASTWhileNode : public ASTNode{
     public:
-        ASTWhileNode(ASTNode* condition, ASTNode* body,int cond_address, int body_address,int return_address);    // Constructor with a condition and a body of statements
+        ASTWhileNode(ASTNode* condition, ASTNode* body);    // Constructor with a condition and a body of statements
         void accept(ASTVisitor& visitor) override;
 
         ASTNode* getCondition() const;                        // Get the condition node

@@ -104,10 +104,14 @@ WHITESPACE [ \t\r]+
     return FLOAT; 
     }
 [0-9]+\.[0-9]+    { 
-    yylval.floatval = atof(yytext); return FLOAT_LIT;  
+    yylval.val.val.floatval = atof(yytext); 
+    yylval.val.numType = NumType::FLOAT;
+    return NUM;  
     } 
 [0-9]+             { 
-    yylval.intval = atoi(yytext); return INT_LIT;
+    yylval.val.val.intval = atoi(yytext); 
+    yylval.val.numType = NumType::INT;
+    return NUM;
     } 
 {RELOP}       {
     yylval.op = get_operator_action(yytext); return RELOP;
