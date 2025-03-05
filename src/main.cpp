@@ -3,7 +3,12 @@
 #include <cstdio>
 #include "../include/parser.tab.h" 
 #include "../include/header.h"
+#include "../include/AST/Base/QuadGenerator.h"
+#include "../include/AST.h"
+#include "../include/symbol_table.h"
+
 extern FILE *yyin; 
+ASTProgramRoot* root = nullptr;
 
 
 /* Helper function to open the file. */
@@ -20,6 +25,7 @@ bool openFile(const char* filename) {
 }
 
 int main(int argc, char* argv[]) {
+    
     if (argc < 2) {
         std::cerr << "Error, entered invalid file name:  " << argv[0] << std::endl;
         return 1;  // Return an error if no filename is provided
@@ -37,11 +43,23 @@ int main(int argc, char* argv[]) {
 
     // Check if the parsing was successful
     if (parseResult == 0) {
-        std::cout << "Parsing successful!" << std::endl;
+        std::cout << "Parsing successful!\n" << std::endl;
     } else {
         std::cerr << "Parsing failed!" << std::endl;
     }
 
+    if (!root) {
+        std::cerr << "Error: Parsing failed!" << std::endl;
+        return 1;
+    }
+
+    // Step 1: Generate TAC
+    QuadGenerator quadGen;
+    quadGen.generateQuad(root);  
+
+    // Step 2: Print TAC output
+    quadGen.printQuad();  
+    symbolTable.printTable();
     return 0;
 }
 

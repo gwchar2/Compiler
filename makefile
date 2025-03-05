@@ -105,7 +105,7 @@ run: $(TARGET)
 # Run all test files in the test folder and append errors to error.txt
 tests: $(TARGET)
 	@> error.txt  # Clear the error.txt file before appending
-	@for file in Tests/*.cpl; do \
+	@for file in tests/*.cpl; do \
 		echo "Running test on $$file" >> error.txt; \
 		./$(TARGET) $$file >> error.txt 2>&1; \
 		echo "------------------------------" >> error.txt; \

@@ -1,8 +1,8 @@
 #include "../include/AST/Base/ASTProgramRoot.h"
 
 /* Constructor for root */
-ASTProgramRoot::ASTProgramRoot(ASTBlockNode* blockNode) : 
-    ASTNode(NodeType::ROOT), mainBlock(blockNode){}
+ASTProgramRoot::ASTProgramRoot(ASTNode* blockNode) : 
+    ASTNode(NodeType::ROOT), mainBlock(dynamic_cast<ASTBlockNode*>(blockNode)){}
 
 /* Retreives the main block (first node)*/
 ASTBlockNode* ASTProgramRoot::getMainBlock() const {

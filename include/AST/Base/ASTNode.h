@@ -16,10 +16,10 @@ class ASTNode {
         };
 
         explicit ASTNode(NodeType type);
-        virtual ~ASTNode();
+        NodeType getType() const;
         
         virtual void accept(ASTVisitor& visitor) = 0;
-        NodeType getType() const;
+        virtual ~ASTNode();
 
     private:
         NodeType type;

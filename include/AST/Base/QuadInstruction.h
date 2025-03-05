@@ -37,14 +37,56 @@ enum class QuadOp {
     HALT    // Halt
 };
 
-struct TacInstruction {
+struct QuadInstruction {
     QuadOp op;
-    str::string result, arg1,arg2   // operands that will be printed
+    std::string strop;
+    std::string result, arg1,arg2;   // operands that will be printed
 
-    TacInstruction(QuadOp op, std::string result = "", std::string arg1 = "", std::string arg2 = "") :
-        op(op), result(std::move(result)), arg1(std::move(arg1)), arg2(std::move(arg2)) {}
+    QuadInstruction(QuadOp op, std::string result = "", std::string arg1 = "", std::string arg2 = "") :
+        op(op), result(std::move(result)), arg1(std::move(arg1)), arg2(std::move(arg2)) {
+            strop = opToString(op);
+        }
 
-    std::string toString() const ;
+    std::string toString() const {
+        return ( strop + " " + result + " " + arg1 + " " + arg2);
+    };
+
+    std::string opToString(QuadOp op) {
+        switch (op) {
+            case QuadOp::IASN: return "IASN";
+            case QuadOp::IPRT: return "IPRT";
+            case QuadOp::IINP: return "IINP";
+            case QuadOp::IEQL: return "IEQL";
+            case QuadOp::INQL: return "INQL";
+            case QuadOp::ILSS: return "ILSS";
+            case QuadOp::IGRT: return "IGRT";
+            case QuadOp::IADD: return "IADD";
+            case QuadOp::ISUB: return "ISUB";
+            case QuadOp::IMLT: return "IMLT";
+            case QuadOp::IDIV: return "IDIV";
+            
+            case QuadOp::RASN: return "RASN";
+            case QuadOp::RPRT: return "RPRT";
+            case QuadOp::RINP: return "RINP";
+            case QuadOp::REQL: return "REQL";
+            case QuadOp::RNQL: return "RNQL";
+            case QuadOp::RLSS: return "RLSS";
+            case QuadOp::RGRT: return "RGRT";
+            case QuadOp::RADD: return "RADD";
+            case QuadOp::RSUB: return "RSUB";
+            case QuadOp::RMLT: return "RMLT";
+            case QuadOp::RDIV: return "RDIV";
+            
+            case QuadOp::ITOR: return "ITOR";
+            case QuadOp::RTOI: return "RTOI";
+            
+            case QuadOp::JUMP: return "JUMP";
+            case QuadOp::JMPZ: return "JMPZ";
+            case QuadOp::HALT: return "HALT";
+            
+            default: return "Unknown";
+        }
+    }
 };
 
 

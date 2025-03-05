@@ -16,9 +16,9 @@ AND       (\&\&)
 NOT       (\!)
 CAST_INT        (cast<int>)
 CAST_FLOAT      (cast<float>)
+SAVED_REGISTER t[0-9]+
 ID        [a-zA-Z_][a-zA-Z0-9_]*
 WHITESPACE [ \t\r]+
-
 /* Making a comment rule to handle nested comments */
 %x COMMENT 
 
@@ -103,15 +103,18 @@ WHITESPACE [ \t\r]+
 "float"    { 
     return FLOAT; 
     }
-[0-9]+\.[0-9]+    { 
-    yylval.val.val.floatval = atof(yytext); 
-    yylval.val.numType = NumType::FLOAT;
-    return NUM;  
-    } 
+{SAVED_REGISTER} {
+    fprintf(stderr,"Invalid register name, {%s} is a saved register!\n",yytext);
+}
 [0-9]+             { 
     yylval.val.val.intval = atoi(yytext); 
     yylval.val.numType = NumType::INT;
     return NUM;
+    } 
+[0-9]+\.[0-9]+    { 
+    yylval.val.val.floatval = atof(yytext); 
+    yylval.val.numType = NumType::FLOAT;
+    return NUM;  
     } 
 {RELOP}       {
     yylval.op = get_operator_action(yytext); return RELOP;

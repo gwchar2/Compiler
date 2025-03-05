@@ -14,12 +14,13 @@ class ASTBinaryExprNode : public ASTNode {
         ActionType getOperator() const;                                   // Gets the operator type
         ASTNode* getLeft() const;                                       // Gets the left node in the expression
         ASTNode* getRight() const;                                      // Gets the right node in the expression
-
+        void setTemp(const std::string& temp);
+        const std::string& getTemp() const;
     private:
         ActionType op;                                                    // Holds the op
         ASTNode* left;                                                  // Holds left node pointer
         ASTNode* right;                                                 // Holds right node pointer
-
+        std::string temp;
 };
 
 

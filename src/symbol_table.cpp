@@ -9,7 +9,13 @@ bool SymbolTable::insert(const std::string& name, DataType type) {
         std::cerr << "Error: Variable '" << name << "' is already declared." << std::endl;
         return false;
     }
-    table[name] = {name, type};
+    /* Create a Symbol */
+    Symbol newSymbol;
+    newSymbol.name = name;
+    newSymbol.typeEnum = type;
+    newSymbol.val = (type == DataType::INT) ? std::variant<int, float>(0) : std::variant<int, float>(0.0f);
+    
+    table[name] = newSymbol;
     return true;
 }
 
@@ -18,13 +24,18 @@ bool SymbolTable::exists(const std::string& name) const {
     return table.find(name) != table.end();
 }
 
-/* Gets the Data Type of the variable */
-DataType SymbolTable::getType(const std::string& name) const {
+/* Returns the symbol if it exists */
+Symbol& SymbolTable::getSymbol(const std::string& name) {
     auto it = table.find(name);
-    if (it != table.end()) {
-        return it->second.typeEnum;
-    }
-    return DataType::UNKNOWN;
+    return it -> second;
+
+    // Need to decide if we do catch / throw, or how we handle this error! (if name isnt in symbol table)
+    // Allways call exists -> getSymbol
+    std::cout << " ERRORRRRRR NEED TO FIX!! " << std::endl;
+    
+}
+void SymbolTable::removeSymbol(const std::string& name){
+    table.erase(name);
 }
 
 /* Gets the Data Type as a string */

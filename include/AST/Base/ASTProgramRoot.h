@@ -3,13 +3,14 @@
 
 #include "ASTNode.h"
 #include "ASTVisitor.h"
-#include "../Statements/ASTBlockNode.h"
+
+class ASTBlockNode;
 
 
 /* The main root node of the AST */
 class ASTProgramRoot : public ASTNode {
     public:
-        ASTProgramRoot(ASTBlockNode* blockNode);
+        ASTProgramRoot(ASTNode* blockNode);
 
         ASTBlockNode* getMainBlock() const;
 

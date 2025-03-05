@@ -1,5 +1,4 @@
 {   /* should print 7788 */
-
    if (10 > 2 || 10 > 100)
     output(7);
    else

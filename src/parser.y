@@ -2,6 +2,7 @@
     #include "../include/header.h"
     #include "../include/symbol_table.h"
     #include "../include/AST.h"
+    extern ASTProgramRoot* root;
     extern int yylex(void);  // Ensure this matches your lexer function
     int yyerror(const char *s);
 
@@ -17,6 +18,7 @@
 }
 
 %define parse.error verbose
+
 %union {                            // For integers & floats (NUM)
     Val val;
     char* strval;                   // For identifiers (ID) and possibly keywords
@@ -25,7 +27,7 @@
     ASTNode* node;                  // ASTNode
     ASTCaseListNode* caseListNode;  // Explicit Case List Node
     ASTStatementListNode* stmtListNode; // Explicit Statement List Node
-    ASTProgramRoot* root;               // Root of the AST
+    ASTProgramRoot* rootNode;               // Root of the AST
     ASTBlockNode* blockNode;
 
 }
@@ -38,8 +40,8 @@
 %type <dataType> type
 %type <stmtListNode> stmtlist  
 %type <caseListNode> caselist
-%type <blockNode> stmt_block
-%type <root> program
+%type <node> stmt_block
+%type <rootNode> program
 %type <node> boolexpr boolterm boolfactor
 %type <node> expression term factor
 %type <node> stmt assignment_stmt input_stmt output_stmt 
@@ -50,7 +52,7 @@
 program:
     declarations stmt_block{
         symbolTable.printTable();
-        $$ = new ASTProgramRoot($2);
+        root = new ASTProgramRoot($2);
     }
     ;
 
@@ -179,7 +181,8 @@ factor:
      }
     | ID { $$ = new ASTIdentifierNode($1); }
     | NUM { if ($1.numType == NumType::INT) $$ = new ASTLiteralNode($1.val.intval);
-            else $$ = new ASTLiteralNode($1.val.floatval); }
+            else $$ = new ASTLiteralNode($1.val.floatval); 
+            }
     ;
 
 %%

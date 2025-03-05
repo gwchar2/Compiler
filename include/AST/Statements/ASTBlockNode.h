@@ -3,7 +3,6 @@
 
 #include "../Base/ASTNode.h"
 #include "../Base/ASTVisitor.h"
-#include "../Statements/ASTStatementListNode.h"
 #include <vector>
 
 /*
@@ -11,6 +10,8 @@ stmt_block:
     '{' stmtlist '}'
     ;
 */
+class ASTStatementListNode;
+
 class ASTBlockNode : public ASTNode {
     public:
         ASTBlockNode(ASTStatementListNode* stmtList);          // Constructor for class

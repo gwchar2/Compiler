@@ -3,9 +3,7 @@
 
 
 #include "../Base/ASTNode.h"
-#include "../Base/ASTVisitor.h"
 #include "../Statements/ASTStatementListNode.h"
-#include "ASTCaseListNode.h"
 #include <vector>
 #include <utility>
 
@@ -19,6 +17,9 @@ caselist:
     | epsilon
     ;
 */
+// No idea why the heck this wont work -> #include "ASTCaseListNode.h" but whatever...Lets just use class
+class ASTCaseListNode;
+
 class ASTSwitchNode : public ASTNode {
     public:
         //Constructor
