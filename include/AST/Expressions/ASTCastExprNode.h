@@ -14,11 +14,9 @@ class ASTCastExprNode : public ASTNode {
 
         ActionType getCastType() const;                                   // Gets the type of cast func
         ASTNode* getOperand() const;                                    // Gets operand
-        void setTemp(const std::string& temp);
     private:
         ActionType castType;                                              // Holds the cast type
         ASTNode* operand;                                               // Holds the operand
-        std::string temp;
 };
 
 

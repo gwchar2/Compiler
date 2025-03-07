@@ -21,8 +21,11 @@ class ASTNode {
         virtual void accept(ASTVisitor& visitor) = 0;
         virtual ~ASTNode();
 
+        void setTemp(const std::string& temp);
+        const std::string& getTemp() const;
     private:
         NodeType type;
+        std::string temp;
 };
 
 

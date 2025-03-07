@@ -1,10 +1,18 @@
 %code requires {
     #include "../include/header.h"
     #include "../include/symbol_table.h"
+    #include "../include/parser.tab.h"
+    #include "../include/global_scope.h"
     #include "../include/AST.h"
     extern ASTProgramRoot* root;
+    extern GlobalScope globalScope;
+    extern int yylineno;
+    extern int yychar;
+    extern char* yytext;
+    extern char* unput;
+    #define yyerrok         (yyerrstatus = 0)
     extern int yylex(void);  // Ensure this matches your lexer function
-    int yyerror(const char *s);
+    void yyerror(const char *s);
 
     /* Short struct for NUM values */
     enum class NumType { INT, FLOAT};
@@ -16,7 +24,6 @@
         } val;                      // Holds the value (float or int)
     } Val;
 }
-
 %define parse.error verbose
 
 %union {                            // For integers & floats (NUM)
@@ -31,9 +38,8 @@
     ASTBlockNode* blockNode;
 
 }
-
 %token '{' '}' '(' ')' ';' ':' ',' 
-%token BREAK CASE DEFAULT ELSE IF INPUT OUTPUT SWITCH WHILE INT FLOAT
+%token BREAK CASE DEFAULT ELSE IF INPUT OUTPUT SWITCH WHILE INT FLOAT 
 %token <val> NUM 
 %token <strval> ID
 %token <op> ADDOP MULOP RELOP CAST ASSIGN OR AND NOT
@@ -50,11 +56,10 @@
 %%
 
 program:
-    declarations stmt_block{
-        symbolTable.printTable();
+    declarations stmt_block {
+        globalScope.printTable();
         root = new ASTProgramRoot($2);
     }
-    ;
 
 declarations:
     declarations declaration
@@ -62,8 +67,8 @@ declarations:
     ;
 
 declaration:
-    idlist ':' type ';'{
-        symbolTable.finalizeTempVariables($3);
+    idlist ':' type ';' {
+        globalScope.finalizeDeclarations($3);
     }
     ;
 
@@ -74,35 +79,36 @@ type:
 
 idlist:
     idlist ',' ID{
-        symbolTable.addTempVariable($3);                // We add the ID to symbol table temp list
+        globalScope.addDeclaration($3);                // We add the ID to symbol table temp list
     }
     | ID{
-        symbolTable.addTempVariable($1);                // We add the ID to symbol table temp list
+        globalScope.addDeclaration($1);                // We add the ID to symbol table temp list
     }
     ;
 
 /* Automatically sets $$ = $1 */
 stmt:
-    assignment_stmt
-    | input_stmt
-    | output_stmt
-    | if_stmt
-    | while_stmt
-    | switch_stmt
-    | break_stmt
-    | stmt_block
-    ;
+    assignment_stmt 
+    | input_stmt 
+    | output_stmt 
+    | if_stmt 
+    | while_stmt 
+    | switch_stmt 
+    | break_stmt 
+    | stmt_block 
 
 assignment_stmt:
-    ID ASSIGN expression ';' { $$ = new ASTAssignNode($1,$3);}
+    ID ASSIGN expression ';' { 
+        $$ = new ASTAssignNode($1,$3);
+        }
     ;
 
 input_stmt:
-    INPUT '(' ID ')' ';'{ $$ = new ASTInputNode($3); }
+    INPUT '(' ID ')' ';' { $$ = new ASTInputNode($3); }
     ;
 
 output_stmt:
-    OUTPUT '(' expression ')' ';'{
+    OUTPUT '(' expression ')' ';' {
         $$ = new ASTOutputNode($3);
     }
     ;
@@ -135,15 +141,15 @@ caselist:
     ;
 
 break_stmt:
-    BREAK ';' {$$ = new ASTBreakNode(); }
+    BREAK ';'  {$$ = new ASTBreakNode(); }
     ;
 
 stmt_block:
-    '{' stmtlist '}' { $$ = new ASTBlockNode($2); }
+    '{' stmtlist '}'  { $$ = new ASTBlockNode($2); }
     ;
 
 stmtlist:
-    stmtlist stmt { 
+    stmtlist stmt  { 
         $$ = $1;
         $$ -> addStatement($2);
     }
@@ -185,4 +191,26 @@ factor:
             }
     ;
 
+
 %%
+
+void yyerror(const char* error_msg) {
+    fprintf(stderr, "Syntax error! %s at line %d\n", error_msg, yylineno);
+    
+    // No need to use yyclearin or yyerrok here as they aren't accessible
+    
+    int token;
+    // Skip until we find a token that can start a new line
+    while ((token = yylex()) != 0) { 
+        if (token == '\n') {
+            printf("Resuming after newline\n");
+            break; // Stop at newline (sync point)
+        }
+        
+        // Add conditions to break on tokens that can start a statement
+        if (token == ID || token == '{' || token == IF || token == WHILE || token == SWITCH) {
+            printf("Resuming parsing from: %s\n", yytext);
+            break; // Found a good restart point
+        }
+    }
+}

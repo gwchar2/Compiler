@@ -13,6 +13,7 @@ class ASTLiteralNode : public ASTNode {
         void accept(ASTVisitor& visitor) override;
 
         std::variant<int, float> getValue() const;
+        std::string getValueAsString() const;
         bool isInt() const;
         bool isFloat() const;
     private:

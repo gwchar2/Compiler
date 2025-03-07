@@ -5,6 +5,7 @@
 #include "QuadInstruction.h"
 #include "ASTVisitor.h"
 #include "../../symbol_table.h"
+#include "../../global_scope.h"
 #include <vector>
 #include <string>
 #include <stack>
@@ -33,18 +34,9 @@ class QuadGenerator : public ASTVisitor {
         void generateQuad(ASTProgramRoot* root);                             // The root of the AST leads to the beginning of traversel. (post order)
         void printQuad();                                                    // We print the commands we parsed   
 
-        /* Helper Functions */
-        std::string handleAssignment(const std::variant<int, float>& val, const DataType& leftType, const DataType& rightType, QuadOp& outOp);
     
     private:
         std::vector<QuadInstruction> instructions;
-        std::stack<std::string> freeTemps;                  // Holds the temporary values we already "counted" but are free to use!
-        int tempCounter = 0;                                // Counts unique amount of temps in this set of instructions
-        int labelCounter = 0;                               // Counts unique labels in this set of instructions
-
-        std::string newTemp();                              // Creates a new temp
-        std::string newLabel();                             // Creates a new label
-        void releaseTemp(std::string temp);                 // Releases a temp to be reused
         
 };
 

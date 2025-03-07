@@ -1,6 +1,6 @@
 # Compiler settings
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -g
+CXXFLAGS = -std=c++17 -Wall -g 
 LDFLAGS = -L/C/msys64/usr/lib -lfl					
 # REMEMBER TO KEEP ONLY -lfl WHEN WE ARE HANDING IN THE PROJECT!!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -15,9 +15,10 @@ TARGET = compiler.exe
 
 # Source files
 MAIN_CPP_SRCS  = $(SRC_DIR)/main.cpp \
-           $(SRC_DIR)/functionHelpers.cpp \
            $(SRC_DIR)/errorHandler.cpp \
-		   $(SRC_DIR)/symbol_table.cpp 
+		   $(SRC_DIR)/symbol_table.cpp \
+		   $(SRC_DIR)/helper_funcs.cpp \
+		   $(SRC_DIR)/global_scope.cpp 
 
 # AST Directories seperately
 AST_BASE_SRCS = $(wildcard $(AST_DIR)/Base/*.cpp)

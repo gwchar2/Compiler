@@ -4,6 +4,9 @@
 #include <string>
 
 enum class QuadOp {
+    //A,B,C -> Integers
+    // D , E, F -> REAL NUMBERS
+    // L -> Jump address
     /* Integer Operations */
     IASN,   // A := B
     IPRT,   // Print the value of B

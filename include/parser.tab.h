@@ -49,10 +49,18 @@ extern int yydebug;
 
     #include "../include/header.h"
     #include "../include/symbol_table.h"
+    #include "../include/parser.tab.h"
+    #include "../include/global_scope.h"
     #include "../include/AST.h"
     extern ASTProgramRoot* root;
+    extern GlobalScope globalScope;
+    extern int yylineno;
+    extern int yychar;
+    extern char* yytext;
+    extern char* unput;
+    #define yyerrok         (yyerrstatus = 0)
     extern int yylex(void);  // Ensure this matches your lexer function
-    int yyerror(const char *s);
+    void yyerror(const char *s);
 
     /* Short struct for NUM values */
     enum class NumType { INT, FLOAT};
@@ -64,7 +72,7 @@ extern int yydebug;
         } val;                      // Holds the value (float or int)
     } Val;
 
-#line 68 "build/parser.tab.h"
+#line 76 "build/parser.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -104,7 +112,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 22 "src/parser.y"
+#line 29 "src/parser.y"
                             // For integers & floats (NUM)
     Val val;
     char* strval;                   // For identifiers (ID) and possibly keywords
@@ -117,7 +125,7 @@ union YYSTYPE
     ASTBlockNode* blockNode;
 
 
-#line 121 "build/parser.tab.h"
+#line 129 "build/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

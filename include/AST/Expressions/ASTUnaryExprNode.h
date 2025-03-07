@@ -10,7 +10,6 @@ class ASTUnaryExprNode : public ASTNode {
     public:
         ASTUnaryExprNode(ASTNode* operand);     // Constructor
         void accept(ASTVisitor& visitor) override;      // Visitor constructor
-        void setTemp(const std::string& temp);
         ASTNode* getOperand() const;                 // Gets the operand 
 
     private:

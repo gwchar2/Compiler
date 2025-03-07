@@ -25,6 +25,9 @@ bool ASTLiteralNode::isFloat() const {
     return std::holds_alternative<float>(value);
 }
 
+std::string ASTLiteralNode::getValueAsString() const {
+    return std::to_string(std::holds_alternative<int>(value) ? std::get<int>(value) : std::get<float>(value));
+}
 /* Visitor */
 void ASTLiteralNode::accept(ASTVisitor& visitor) {
     visitor.visit(*this);

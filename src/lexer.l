@@ -1,12 +1,12 @@
 %{
 #include "../include/header.h"
 #include "../include/parser.tab.h"
-
 extern FILE *yyin;
 int line_number = 1;
 int comment_nesting = 0;
 %}
 /* Macros to define regular expressions */
+%option yylineno
 %option noyywrap 
 RELOP     (\<=|\>=|\<|\>|\=\!|\=\=)
 ADDOP     (\+|\-)
@@ -29,7 +29,7 @@ WHITESPACE [ \t\r]+
     "/*"           { 
                         comment_nesting++; /* If we find another comment , comment nesting ++ */
                         if (comment_nesting > 1) {
-                            errorHandler(ERR_NESTED_COMMENTS); 
+                            errorHandler(ErrorCode::ERR_NESTED_COMMENTS,yylineno); 
                             BEGIN(INITIAL); 
                         }
                     }  
@@ -41,7 +41,7 @@ WHITESPACE [ \t\r]+
                     }
     .              { /* Consume any character inside the comment */ }
     <<EOF>>        { 
-                        errorHandler(ERR_UNTERMINATED_COMMENT);
+                        errorHandler(ErrorCode::ERR_UNTERMINATED_COMMENT,yylineno);
                         BEGIN(INITIAL); 
                     }
 }
@@ -144,17 +144,13 @@ WHITESPACE [ \t\r]+
     yylval.strval = strdup(yytext); return ID;
     }
 {WHITESPACE}  {  }
-\n            { 
-    yylineno++;
-    line_number++; 
-    }
-.             { 
-    errorHandler(ERR_TOKEN_INVALID); 
-    }
-%%
 
-int yyerror(const char* error_msg) {
-    fprintf(stderr, "Syntax error: [%s] \nLine [%d] \nToken [%s]\n", error_msg,yylineno, yytext);
-    return 0; 
+\n          { 
+    yylineno++;
+    }
+.           { 
+    fprintf(stderr, "Lexical error at line %d: Unrecognized character '%s'\n", yylineno, yytext);
 }
 
+
+%%

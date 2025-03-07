@@ -163,8 +163,27 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
     
-    #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex.
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                int yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
+    #define YY_LINENO_REWIND_TO(dst) \
+            do {\
+                const char *p;\
+                for ( p = yy_cp-1; p >= (dst); --p)\
+                    if ( *p == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -497,6 +516,13 @@ static const flex_int16_t yy_chk[165] =
       105,  105,  105,  105
     } ;
 
+/* Table of booleans, true if rule could match eol. */
+static const flex_int32_t yy_rule_can_match_eol[40] =
+    {   0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+        };
+
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -515,15 +541,14 @@ char *yytext;
 #line 2 "src/lexer.l"
 #include "../include/header.h"
 #include "../include/parser.tab.h"
-
 extern FILE *yyin;
 int line_number = 1;
 int comment_nesting = 0;
-#line 522 "build/lex.yy.c"
+#line 547 "build/lex.yy.c"
 /* Macros to define regular expressions */
 /* Making a comment rule to handle nested comments */
  
-#line 526 "build/lex.yy.c"
+#line 551 "build/lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -744,7 +769,7 @@ YY_DECL
 #line 25 "src/lexer.l"
 
 
-#line 747 "build/lex.yy.c"
+#line 772 "build/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -790,6 +815,16 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			int yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					
+    yylineno++;
+;
+			}
+
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -813,7 +848,7 @@ YY_RULE_SETUP
 { 
                         comment_nesting++; /* If we find another comment , comment nesting ++ */
                         if (comment_nesting > 1) {
-                            errorHandler(ERR_NESTED_COMMENTS); 
+                            errorHandler(ErrorCode::ERR_NESTED_COMMENTS,yylineno); 
                             BEGIN(INITIAL); 
                         }
                     }  
@@ -836,7 +871,7 @@ YY_RULE_SETUP
 case YY_STATE_EOF(COMMENT):
 #line 43 "src/lexer.l"
 { 
-                        errorHandler(ERR_UNTERMINATED_COMMENT);
+                        errorHandler(ErrorCode::ERR_UNTERMINATED_COMMENT,yylineno);
                         BEGIN(INITIAL); 
                     }
 	YY_BREAK
@@ -1071,25 +1106,24 @@ YY_RULE_SETUP
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 147 "src/lexer.l"
+#line 148 "src/lexer.l"
 { 
     yylineno++;
-    line_number++; 
     }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 151 "src/lexer.l"
 { 
-    errorHandler(ERR_TOKEN_INVALID); 
-    }
+    fprintf(stderr, "Lexical error at line %d: Unrecognized character '%s'\n", yylineno, yytext);
+}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 154 "src/lexer.l"
+#line 156 "src/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1092 "build/lex.yy.c"
+#line 1126 "build/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1457,6 +1491,10 @@ static int yy_get_next_buffer (void)
 
 	*--yy_cp = (char) c;
 
+    if ( c == '\n' ){
+        --yylineno;
+    }
+
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
@@ -1533,6 +1571,11 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
+
+	if ( c == '\n' )
+		
+    yylineno++;
+;
 
 	return c;
 }
@@ -2000,6 +2043,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -2094,12 +2140,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 154 "src/lexer.l"
-
-
-int yyerror(const char* error_msg) {
-    fprintf(stderr, "Syntax error: [%s] \nLine [%d] \nToken [%s]\n", error_msg,yylineno, yytext);
-    return 0; 
-}
-
+#line 156 "src/lexer.l"
 

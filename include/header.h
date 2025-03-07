@@ -5,16 +5,16 @@
 #include <string>
 #include <iomanip>
 
-/* Error Types */
-typedef enum ErrorCode{
+/* Error Types - Move to some header? */
+enum class ErrorCode{
     ERR_NO_FILE_FOUND,
     ERR_FILE_CANT_BE_OPENED,
     ERR_FILE_CANT_BE_READ,
     ERR_NESTED_COMMENTS,
     ERR_UNTERMINATED_COMMENT,
     ERR_TOKEN_INVALID,
-    ERR_OUTPUT_FILE
-} ErrorCode; 
+};
+
 
 typedef enum ActionType{
     /* Comparators */
@@ -45,14 +45,20 @@ typedef enum ActionType{
 } ActionType;
 
 /* errorHandler.c++ */
-void errorHandler(ErrorCode errorCode);             // Error text function
+void errorHandler(ErrorCode errorCode,int line);             // Error text function
 
-/* functions.cpp */
+/* helper_funcs.cpp */
 ActionType get_operator_action(const std::string&op);     // Returns the correct Action Type
 
 /* Externals */
 extern int yylex();   
-extern class Token currentToken;                    // Global Token class.
 extern FILE* yyin;                                  // Global file pointer.
-extern int line_number;                             // Global line number. 
+extern bool errorFlag;
+
+
+
+
 #endif
+
+
+

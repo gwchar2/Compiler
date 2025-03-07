@@ -6,10 +6,13 @@
 #include "../include/AST/Base/QuadGenerator.h"
 #include "../include/AST.h"
 #include "../include/symbol_table.h"
+#include "../include/global_scope.h"
 
 extern FILE *yyin; 
+extern GlobalScope globalScope;
+extern int yylineno;
 ASTProgramRoot* root = nullptr;
-
+bool errorflag = false;
 
 /* Helper function to open the file. */
 bool openFile(const char* filename) {
@@ -39,27 +42,15 @@ int main(int argc, char* argv[]) {
     }
 
     // Call yyparse() to run the parser, which in turn calls yylex() from Flex
-    int parseResult = yyparse();
-
-    // Check if the parsing was successful
-    if (parseResult == 0) {
-        std::cout << "Parsing successful!\n" << std::endl;
-    } else {
-        std::cerr << "Parsing failed!" << std::endl;
-    }
-
-    if (!root) {
-        std::cerr << "Error: Parsing failed!" << std::endl;
-        return 1;
-    }
+    yyparse();
 
     // Step 1: Generate TAC
     QuadGenerator quadGen;
     quadGen.generateQuad(root);  
 
     // Step 2: Print TAC output
-    quadGen.printQuad();  
-    symbolTable.printTable();
+    globalScope.printTable();
+    printf("%d\n",yylineno);
     return 0;
 }
 

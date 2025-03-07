@@ -9,10 +9,6 @@ ASTNode* ASTUnaryExprNode::getOperand() const {
     return operand;
 }
 
-void ASTUnaryExprNode::setTemp(const std::string& temp){
-    this -> temp = temp;
-}
-
 /* Visitor constructor */
 void ASTUnaryExprNode::accept(ASTVisitor& visitor){
     visitor.visit(*this);

@@ -1,7 +1,4 @@
 try1, try2 : float;
-try3, try4 : int;
 {
-    output(try3);
-    output(try2);
-    output(15);
+    try1 = 3.0;
 }
