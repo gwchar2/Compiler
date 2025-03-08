@@ -1108,7 +1108,7 @@ case 37:
 YY_RULE_SETUP
 #line 148 "src/lexer.l"
 { 
-    yylineno++;
+    line_number++;
     }
 	YY_BREAK
 case 38:

@@ -3,7 +3,7 @@ extern FILE *yyin;
 
 
 /* Prints the correct error on lexical analysis phase only */
-void errorHandler(ErrorCode errorCode,int line){
+void errorHandler(ErrorCode errorCode,int line ){
     switch (errorCode){
         /* Normal errors, including the lexer */
         case ErrorCode::ERR_NESTED_COMMENTS:

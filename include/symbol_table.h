@@ -7,6 +7,8 @@
 #include <string>
 #include <variant>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 
 
 /* Data types of variables */
@@ -20,6 +22,8 @@ struct Symbol {
 
     /* Gets the type of the symbol */
     DataType getType() const { return typeEnum; }
+    
+    void setType(DataType type) { typeEnum = type; }
 
     /* Gets the symbol value */
     std::variant<int, float> getVal() const { return val; }
@@ -28,12 +32,20 @@ struct Symbol {
     void setVal(std::variant<int, float> newVal) { val = newVal; }
 
     /* Converts value to string */
-
     std::string valStr() const {
-        std::string valStr = std::to_string(std::holds_alternative<int>(val) ? std::get<int>(val) : std::get<float>(val));
-        return valStr;
+        std::ostringstream stream;
+        if (std::holds_alternative<int>(val))
+            stream << std::get<int>(val);
+        else 
+            stream << std::fixed << std::setprecision(3) << std::get<float>(val);
+        
+        return stream.str();
     }
 
+    std::string getName() const {
+        return name;
+    }
+    
     /* Converts type to a readable string (Mostly debugging) */
     std::string typeStr() const {                                          
         switch (typeEnum) {
@@ -49,7 +61,7 @@ class SymbolTable {
     public:
         Symbol& insert(const std::string& name, DataType type);            // Adds a variable to the table
         bool exists(const std::string& name) const;                     // Checks if a variable exists
-        const Symbol& getSymbol(const std::string& name) const;               // Retrieves a symbol
+        Symbol& getSymbol(const std::string& name);               // Retrieves a symbol
         const std::unordered_map<std::string, Symbol>& getSymbols() const;
         std::vector<std::string> getTemporaries() const;
          

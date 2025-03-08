@@ -31,12 +31,15 @@ class QuadGenerator : public ASTVisitor {
         void visit(ASTIdentifierNode& node) override;
         void visit(ASTLiteralNode& node) override;
 
-        void generateQuad(ASTProgramRoot* root);                             // The root of the AST leads to the beginning of traversel. (post order)
-        void printQuad();                                                    // We print the commands we parsed   
+        void generateQuad(ASTProgramRoot* root);                                                            // The root of the AST leads to the beginning of traversel. (post order)
+        void printQuad();                                                                                   // We print the commands we parsed   
 
+        void typeConvertion(ASTNode* lhsNode, ASTNode* rhsNode);          // Converts the operands to floats if needed 
+        void performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol, Symbol& rhsSymbol);               // Performs the correct arethmetic operation and saves result in the node temp          
     
     private:
         std::vector<QuadInstruction> instructions;
+
         
 };
 

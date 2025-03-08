@@ -1,4 +1,20 @@
-try1, try2 : float;
+/* Prints all prime numbers between 2 to 38 */
+a,b, stop : int;
 {
-    try1 = 3.0;
+  a = 3;
+  b = 5;
+  stop = a+b;
+    switch (5 + 5) {
+        case 3:
+            output(a);
+            break;
+        case 10:
+            output(b);
+            break;
+        case 15:
+            output(stop);
+            break;
+        default:
+            output(a);
+    }
 }

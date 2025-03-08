@@ -535,10 +535,10 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    59,    59,    65,    66,    70,    76,    77,    81,    84,
-      91,    92,    93,    94,    95,    96,    97,    98,   101,   107,
-     111,   117,   123,   129,   136,   140,   144,   148,   152,   156,
-     160,   161,   165,   166,   170,   171,   175,   176,   180,   181,
-     185,   186,   188,   189
+      91,    92,    93,    94,    95,    96,    97,    98,   101,   106,
+     110,   116,   122,   128,   135,   139,   143,   147,   151,   155,
+     159,   160,   164,   165,   169,   170,   174,   175,   179,   180,
+     184,   185,   186,   187
 };
 #endif
 
@@ -1478,180 +1478,178 @@ yyreduce:
   case 18: /* assignment_stmt: ID ASSIGN expression ';'  */
 #line 101 "src/parser.y"
                              { 
-        (yyval.node) = new ASTAssignNode((yyvsp[-3].strval),(yyvsp[-1].node));
-        }
-#line 1484 "build/parser.tab.c"
+        (yyval.node) = new ASTAssignNode((yyvsp[-3].strval),(yyvsp[-1].node));}
+#line 1483 "build/parser.tab.c"
     break;
 
   case 19: /* input_stmt: INPUT '(' ID ')' ';'  */
-#line 107 "src/parser.y"
+#line 106 "src/parser.y"
                          { (yyval.node) = new ASTInputNode((yyvsp[-2].strval)); }
-#line 1490 "build/parser.tab.c"
+#line 1489 "build/parser.tab.c"
     break;
 
   case 20: /* output_stmt: OUTPUT '(' expression ')' ';'  */
-#line 111 "src/parser.y"
+#line 110 "src/parser.y"
                                   {
         (yyval.node) = new ASTOutputNode((yyvsp[-2].node));
     }
-#line 1498 "build/parser.tab.c"
+#line 1497 "build/parser.tab.c"
     break;
 
   case 21: /* if_stmt: IF '(' boolexpr ')' stmt ELSE stmt  */
-#line 117 "src/parser.y"
+#line 116 "src/parser.y"
                                        {
         (yyval.node) = new ASTIfNode((yyvsp[-4].node),(yyvsp[-2].node),(yyvsp[0].node));
     }
-#line 1506 "build/parser.tab.c"
+#line 1505 "build/parser.tab.c"
     break;
 
   case 22: /* while_stmt: WHILE '(' boolexpr ')' stmt  */
-#line 123 "src/parser.y"
+#line 122 "src/parser.y"
                                {
         (yyval.node) = new ASTWhileNode((yyvsp[-2].node),(yyvsp[0].node));
     }
-#line 1514 "build/parser.tab.c"
+#line 1513 "build/parser.tab.c"
     break;
 
   case 23: /* switch_stmt: SWITCH '(' expression ')' '{' caselist DEFAULT ':' stmtlist '}'  */
-#line 129 "src/parser.y"
+#line 128 "src/parser.y"
                                                                    {
         (yyval.node) = new ASTSwitchNode((yyvsp[-7].node),(yyvsp[-4].caseListNode),(yyvsp[-1].stmtListNode));
     }
-#line 1522 "build/parser.tab.c"
+#line 1521 "build/parser.tab.c"
     break;
 
   case 24: /* caselist: caselist CASE NUM ':' stmtlist  */
-#line 136 "src/parser.y"
+#line 135 "src/parser.y"
                                    { 
         (yyval.caseListNode) = (yyvsp[-4].caseListNode);
         (yyval.caseListNode)->addCase(new ASTLiteralNode((yyvsp[-2].val).val.intval), (yyvsp[0].stmtListNode));
     }
-#line 1531 "build/parser.tab.c"
+#line 1530 "build/parser.tab.c"
     break;
 
   case 25: /* caselist: %empty  */
-#line 140 "src/parser.y"
+#line 139 "src/parser.y"
                     { (yyval.caseListNode) = new ASTCaseListNode(); }
-#line 1537 "build/parser.tab.c"
+#line 1536 "build/parser.tab.c"
     break;
 
   case 26: /* break_stmt: BREAK ';'  */
-#line 144 "src/parser.y"
+#line 143 "src/parser.y"
                {(yyval.node) = new ASTBreakNode(); }
-#line 1543 "build/parser.tab.c"
+#line 1542 "build/parser.tab.c"
     break;
 
   case 27: /* stmt_block: '{' stmtlist '}'  */
-#line 148 "src/parser.y"
+#line 147 "src/parser.y"
                       { (yyval.node) = new ASTBlockNode((yyvsp[-1].stmtListNode)); }
-#line 1549 "build/parser.tab.c"
+#line 1548 "build/parser.tab.c"
     break;
 
   case 28: /* stmtlist: stmtlist stmt  */
-#line 152 "src/parser.y"
+#line 151 "src/parser.y"
                    { 
         (yyval.stmtListNode) = (yyvsp[-1].stmtListNode);
         (yyval.stmtListNode) -> addStatement((yyvsp[0].node));
     }
-#line 1558 "build/parser.tab.c"
+#line 1557 "build/parser.tab.c"
     break;
 
   case 29: /* stmtlist: %empty  */
-#line 156 "src/parser.y"
+#line 155 "src/parser.y"
                     { (yyval.stmtListNode) = new ASTStatementListNode(); }
-#line 1564 "build/parser.tab.c"
+#line 1563 "build/parser.tab.c"
     break;
 
   case 30: /* boolexpr: boolexpr OR boolterm  */
-#line 160 "src/parser.y"
+#line 159 "src/parser.y"
                          { (yyval.node) = new ASTBinaryExprNode((yyvsp[-1].op),(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 1570 "build/parser.tab.c"
+#line 1569 "build/parser.tab.c"
     break;
 
   case 31: /* boolexpr: boolterm  */
-#line 161 "src/parser.y"
+#line 160 "src/parser.y"
                { (yyval.node) = (yyvsp[0].node); }
-#line 1576 "build/parser.tab.c"
+#line 1575 "build/parser.tab.c"
     break;
 
   case 32: /* boolterm: boolterm AND boolfactor  */
-#line 165 "src/parser.y"
+#line 164 "src/parser.y"
                             { (yyval.node) = new ASTBinaryExprNode((yyvsp[-1].op),(yyvsp[-2].node),(yyvsp[0].node));}
-#line 1582 "build/parser.tab.c"
+#line 1581 "build/parser.tab.c"
     break;
 
   case 33: /* boolterm: boolfactor  */
-#line 166 "src/parser.y"
+#line 165 "src/parser.y"
                  {(yyval.node) = (yyvsp[0].node);}
-#line 1588 "build/parser.tab.c"
+#line 1587 "build/parser.tab.c"
     break;
 
   case 34: /* boolfactor: NOT '(' boolexpr ')'  */
-#line 170 "src/parser.y"
+#line 169 "src/parser.y"
                          { (yyval.node) = new ASTUnaryExprNode((yyvsp[-1].node)); }
-#line 1594 "build/parser.tab.c"
+#line 1593 "build/parser.tab.c"
     break;
 
   case 35: /* boolfactor: expression RELOP expression  */
-#line 171 "src/parser.y"
+#line 170 "src/parser.y"
                                   { (yyval.node) = new ASTBinaryExprNode((yyvsp[-1].op),(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 1600 "build/parser.tab.c"
+#line 1599 "build/parser.tab.c"
     break;
 
   case 36: /* expression: expression ADDOP term  */
-#line 175 "src/parser.y"
+#line 174 "src/parser.y"
                           { (yyval.node) = new ASTBinaryExprNode((yyvsp[-1].op),(yyvsp[-2].node),(yyvsp[0].node)); }
-#line 1606 "build/parser.tab.c"
+#line 1605 "build/parser.tab.c"
     break;
 
   case 37: /* expression: term  */
-#line 176 "src/parser.y"
+#line 175 "src/parser.y"
            { (yyval.node) = (yyvsp[0].node); }
-#line 1612 "build/parser.tab.c"
+#line 1611 "build/parser.tab.c"
     break;
 
   case 38: /* term: term MULOP factor  */
-#line 180 "src/parser.y"
+#line 179 "src/parser.y"
                       { (yyval.node) = new ASTBinaryExprNode((yyvsp[-1].op),(yyvsp[-2].node),(yyvsp[0].node));}
-#line 1618 "build/parser.tab.c"
+#line 1617 "build/parser.tab.c"
     break;
 
   case 39: /* term: factor  */
-#line 181 "src/parser.y"
+#line 180 "src/parser.y"
              { (yyval.node) = (yyvsp[0].node); }
-#line 1624 "build/parser.tab.c"
+#line 1623 "build/parser.tab.c"
     break;
 
   case 40: /* factor: '(' expression ')'  */
-#line 185 "src/parser.y"
+#line 184 "src/parser.y"
                        { (yyval.node) = (yyvsp[-1].node); }
-#line 1630 "build/parser.tab.c"
+#line 1629 "build/parser.tab.c"
     break;
 
   case 41: /* factor: CAST '(' expression ')'  */
-#line 186 "src/parser.y"
-                              { (yyval.node) = new ASTCastExprNode((yyvsp[-3].op),(yyvsp[-1].node));
-     }
-#line 1637 "build/parser.tab.c"
+#line 185 "src/parser.y"
+                              { (yyval.node) = new ASTCastExprNode((yyvsp[-3].op),(yyvsp[-1].node));}
+#line 1635 "build/parser.tab.c"
     break;
 
   case 42: /* factor: ID  */
-#line 188 "src/parser.y"
+#line 186 "src/parser.y"
          { (yyval.node) = new ASTIdentifierNode((yyvsp[0].strval)); }
-#line 1643 "build/parser.tab.c"
+#line 1641 "build/parser.tab.c"
     break;
 
   case 43: /* factor: NUM  */
-#line 189 "src/parser.y"
+#line 187 "src/parser.y"
           { if ((yyvsp[0].val).numType == NumType::INT) (yyval.node) = new ASTLiteralNode((yyvsp[0].val).val.intval);
             else (yyval.node) = new ASTLiteralNode((yyvsp[0].val).val.floatval); 
             }
-#line 1651 "build/parser.tab.c"
+#line 1649 "build/parser.tab.c"
     break;
 
 
-#line 1655 "build/parser.tab.c"
+#line 1653 "build/parser.tab.c"
 
       default: break;
     }
@@ -1875,11 +1873,11 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 195 "src/parser.y"
+#line 193 "src/parser.y"
 
 
 void yyerror(const char* error_msg) {
-    fprintf(stderr, "Syntax error! %s at line %d\n", error_msg, yylineno);
+    fprintf(stderr, "Syntax error! %s at line %d\n", error_msg, line_number);
     
     // No need to use yyclearin or yyerrok here as they aren't accessible
     

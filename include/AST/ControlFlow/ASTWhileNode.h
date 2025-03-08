@@ -17,15 +17,10 @@ class ASTWhileNode : public ASTNode{
 
         ASTNode* getCondition() const;                        // Get the condition node
         ASTNode* getBody() const;                             // Get the body node
-        int getCondAddress() const;
-        int getBodyAddress() const;
-        int getReturnAddress() const;
+
     private:
         ASTNode* condition;                             // Loop condition
         ASTNode* body;                                  // Loop body
-        int cond_address;        
-        int body_address;
-        int return_address;                             // return address for a break
 
 };
 

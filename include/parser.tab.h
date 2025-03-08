@@ -54,7 +54,7 @@ extern int yydebug;
     #include "../include/AST.h"
     extern ASTProgramRoot* root;
     extern GlobalScope globalScope;
-    extern int yylineno;
+    extern int line_number;
     extern int yychar;
     extern char* yytext;
     extern char* unput;

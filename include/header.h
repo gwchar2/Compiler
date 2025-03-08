@@ -25,17 +25,17 @@ typedef enum ActionType{
     CMP_NE,        // not equal (!=)
     CMP_EQ,        // equal (==)
 
+    /* Logical Actions */
+    LOGICAL_OR,
+    LOGICAL_AND,
+    LOGICAL_NOT,
+
     /* Mathematical Tokens */
     ADD,           // (+)
     SUB,           // (-)
 
     MUL,           // (*)
     DIV,           // (/)
-
-    /* Logical Actions */
-    LOGICAL_OR,
-    LOGICAL_AND,
-    LOGICAL_NOT,
 
     /* Actions */
     ACTION_CASTINT,

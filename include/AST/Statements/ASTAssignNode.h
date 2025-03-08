@@ -10,7 +10,7 @@ class ASTAssignNode : public ASTNode {
         ASTAssignNode(const std::string& id, ASTNode* expression);  // Constructor
         void accept(ASTVisitor& visitor) override;                  // Visitor func constructor
 
-        const std::string& getID() const;                                 // Get left side
+        const std::string& getID() const;                           // Get left side
         ASTNode* getExpression() const;                             // Get right side
 
     private:

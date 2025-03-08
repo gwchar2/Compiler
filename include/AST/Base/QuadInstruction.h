@@ -1,7 +1,6 @@
 #ifndef QUAD_INSTRUCTION_H
 #define QUAD_INSTRUCTION_H
-
-#include <string>
+#include "QuadGenerator.h"
 
 enum class QuadOp {
     //A,B,C -> Integers
@@ -37,21 +36,27 @@ enum class QuadOp {
 
     JUMP,   // Jump to Instruction number L
     JMPZ,   // If A=0 then jump to instruction number L else continue
-    HALT    // Halt
+    HALT,    // Halt
+    EMPTY
 };
 
 struct QuadInstruction {
     QuadOp op;
     std::string strop;
     std::string result, arg1,arg2;   // operands that will be printed
-
+    
+    
     QuadInstruction(QuadOp op, std::string result = "", std::string arg1 = "", std::string arg2 = "") :
-        op(op), result(std::move(result)), arg1(std::move(arg1)), arg2(std::move(arg2)) {
+        op(op), result(result), arg1(arg1), arg2(arg2) {
             strop = opToString(op);
         }
 
+    void setResult(std::string& jump_address){
+        result = jump_address;
+    }
+
     std::string toString() const {
-        return ( strop + " " + result + " " + arg1 + " " + arg2);
+        return (strop + " " + result + " " + arg1 + " " + arg2);
     };
 
     std::string opToString(QuadOp op) {
@@ -86,11 +91,14 @@ struct QuadInstruction {
             case QuadOp::JUMP: return "JUMP";
             case QuadOp::JMPZ: return "JMPZ";
             case QuadOp::HALT: return "HALT";
+            case QuadOp::EMPTY: return "";
             
             default: return "Unknown";
         }
     }
-};
 
+
+
+};
 
 #endif

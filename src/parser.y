@@ -6,7 +6,7 @@
     #include "../include/AST.h"
     extern ASTProgramRoot* root;
     extern GlobalScope globalScope;
-    extern int yylineno;
+    extern int line_number;
     extern int yychar;
     extern char* yytext;
     extern char* unput;
@@ -99,8 +99,7 @@ stmt:
 
 assignment_stmt:
     ID ASSIGN expression ';' { 
-        $$ = new ASTAssignNode($1,$3);
-        }
+        $$ = new ASTAssignNode($1,$3);}
     ;
 
 input_stmt:
@@ -183,8 +182,7 @@ term:
 
 factor:
     '(' expression ')' { $$ = $2; }
-    | CAST '(' expression ')' { $$ = new ASTCastExprNode($1,$3);
-     }
+    | CAST '(' expression ')' { $$ = new ASTCastExprNode($1,$3);}
     | ID { $$ = new ASTIdentifierNode($1); }
     | NUM { if ($1.numType == NumType::INT) $$ = new ASTLiteralNode($1.val.intval);
             else $$ = new ASTLiteralNode($1.val.floatval); 
@@ -195,7 +193,7 @@ factor:
 %%
 
 void yyerror(const char* error_msg) {
-    fprintf(stderr, "Syntax error! %s at line %d\n", error_msg, yylineno);
+    fprintf(stderr, "Syntax error! %s at line %d\n", error_msg, line_number);
     
     // No need to use yyclearin or yyerrok here as they aren't accessible
     

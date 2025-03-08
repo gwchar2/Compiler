@@ -47,10 +47,9 @@ int main(int argc, char* argv[]) {
     // Step 1: Generate TAC
     QuadGenerator quadGen;
     quadGen.generateQuad(root);  
+    std::cout <<"\n";
+    quadGen.printQuad();
 
-    // Step 2: Print TAC output
-    globalScope.printTable();
-    printf("%d\n",yylineno);
     return 0;
 }
 

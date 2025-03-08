@@ -23,7 +23,7 @@ bool SymbolTable::exists(const std::string& name) const{
 }
 
 /* Retrieves a symbol from the table. If it doesn't exist, returns nullptr. */
-const Symbol& SymbolTable::getSymbol(const std::string& name) const {
+Symbol& SymbolTable::getSymbol(const std::string& name) {
     auto it = symbols.find(name);
     if (it == symbols.end()) {
         throw std::runtime_error("Error: Variable '" + name + "' not found in the symbol table.");
@@ -64,5 +64,5 @@ void SymbolTable::releaseTemporaries(){
 
 void SymbolTable::printTable(){
     for (const auto& entry : symbols)
-        std::cout << " " << entry.first << " : " << entry.second.valStr() << "\n";
+        std::cout << " " << entry.first << " : " << entry.second.valStr() << " : " << entry.second.typeStr()<<std::endl;
 }

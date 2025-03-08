@@ -12,13 +12,18 @@ a,b, stop : int;
     stop = 1;
 
     while(b < stop*a/2) {
-       if (a/b * b==a) { stop = 0;}
-	   else { }
-       b = b + 1;
+      if (a/b * b==a) { stop = 0;}
+	    else { }
+      b = b + 1;
     }
-    if (stop == 1)
-	    { output(a);}
-	else { }
+
+
+    if (stop == 1){ 
+      output(a);
+    }
+	  else { }
+
+    
     a = a + 2;
   }
 

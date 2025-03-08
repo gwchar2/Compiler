@@ -146,7 +146,7 @@ WHITESPACE [ \t\r]+
 {WHITESPACE}  {  }
 
 \n          { 
-    yylineno++;
+    line_number++;
     }
 .           { 
     fprintf(stderr, "Lexical error at line %d: Unrecognized character '%s'\n", yylineno, yytext);
