@@ -1,0 +1,42 @@
+IASN t0 2 
+IPRT t0  
+IASN t0 3 
+IPRT t0  
+IASN t0 5 
+IASN a 5 
+IASN t0 38 
+ILSS t2 5 38
+IEQL t3 5 38
+IADD t1 t2 t3
+INQL t1 t1 0
+JMPZ 42 t1 
+IASN t0 2 
+IASN b 2 
+IASN t0 1 
+IASN stop 1 
+IMLT t0 stop a
+IASN t2 2 
+IDIV t3 t0 t2
+ILSS t2 b t3
+JMPZ 33 t2 
+IDIV t3 a b
+IMLT t0 t3 b
+IEQL t3 t0 a
+JMPZ 29 t3 
+IASN t0 0 
+IASN stop 0 
+JUMP 29  
+IASN t3 1 
+IADD t0 b t3
+IASN b 3 
+JUMP 17  
+IASN t2 1 
+IEQL t0 stop t2
+JMPZ 38 t0 
+IPRT a  
+JUMP 38  
+IASN t0 2 
+IADD t2 a t0
+IASN a 7 
+JUMP 7  
+HALT   

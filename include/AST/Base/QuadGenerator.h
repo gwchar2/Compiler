@@ -2,13 +2,9 @@
 #define QUAD_GENERATOR_H
 
 #include "../../AST.h"
-#include "QuadInstruction.h"
-#include "ASTVisitor.h"
 #include "../../symbol_table.h"
 #include "../../global_scope.h"
-#include <vector>
-#include <string>
-#include <stack>
+#include "QuadInstruction.h"
     
 
 class QuadGenerator : public ASTVisitor {
@@ -22,7 +18,7 @@ class QuadGenerator : public ASTVisitor {
         void visit(ASTOutputNode& node) override;
         void visit(ASTIfNode& node) override;
         void visit(ASTWhileNode& node) override;
-        void visit(ASTCaseListNode& node) override;
+        void visit(ASTCaseListNode& nodes) override;
         void visit(ASTSwitchNode& node) override;
         void visit(ASTBreakNode& node) override;
         void visit(ASTBinaryExprNode& node) override;
@@ -32,14 +28,15 @@ class QuadGenerator : public ASTVisitor {
         void visit(ASTLiteralNode& node) override;
 
         void generateQuad(ASTProgramRoot* root);                                                            // The root of the AST leads to the beginning of traversel. (post order)
-        void printQuad();                                                                                   // We print the commands we parsed   
+        void printQuad(std::ostream& out);                                                                                   // We print the commands we parsed   
 
-        void typeConvertion(ASTNode* lhsNode, ASTNode* rhsNode);          // Converts the operands to floats if needed 
+        void typeConversion(ASTNode* lhsNode, ASTNode* rhsNode);                                            // Converts the operands to floats if needed 
         void performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol, Symbol& rhsSymbol);               // Performs the correct arethmetic operation and saves result in the node temp          
-    
-    private:
+      
+      private:
         std::vector<QuadInstruction> instructions;
-
+        std::vector<std::pair<std::string, int>> casePlaceHolders;                                          // Stores the placeholders for cases in a switch 
+        std::string switchTemp;                                                                             // Stores the switch condition
         
 };
 

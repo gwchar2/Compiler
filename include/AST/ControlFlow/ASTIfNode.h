@@ -13,17 +13,17 @@ if_stmt:
 class ASTIfNode : public ASTNode {
     public:
     // Constructors
-        ASTIfNode(ASTNode* condition, ASTNode* mainBlock, ASTNode* elseBlock);
+        ASTIfNode(ASTNode* condition, ASTNode* mainBlock, ASTNode* elseBlock,int line_number);
         void accept(ASTVisitor& visitor) override;
 
-        ASTNode* getCondition() const;                             // gets loop condition
-        ASTNode* getMainBlock() const;                             // gets Main Block
-        ASTNode* getElseBlock() const;                             // gets the else block
+        ASTNode* getCondition() const;                              // gets loop condition
+        ASTNode* getMainBlock() const;                              // gets Main Block
+        ASTNode* getElseBlock() const;                              // gets the else block
 
     private:
-        ASTNode* condition;                                 // Loop Condition
-        ASTNode* mainBlock;                                 // Main-Block
-        ASTNode* elseBlock;                                 // Else-block
+        ASTNode* condition;                                         // Loop Condition
+        ASTNode* mainBlock;                                         // Main-Block
+        ASTNode* elseBlock;                                         // Else-block
 };
 
 

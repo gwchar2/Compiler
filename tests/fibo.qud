@@ -1,0 +1,31 @@
+IASN t0 0 
+IASN a 0 
+IASN t0 1 
+IASN b 1 
+IASN t0 1000 
+ILSS t2 0 1000
+IEQL t3 0 1000
+IADD t1 t2 t3
+INQL t1 t1 0
+JMPZ 31 t1 
+IASN t0 0 
+ILSS t2 1 0
+IEQL t4 1 0
+IADD t3 t2 t4
+INQL t3 t3 0
+JMPZ 25 t3 
+ISUB t0 a b
+IASN c -1 
+INQL t0 c b
+JMPZ 24 t0 
+IADD t4 a c
+IASN b -1 
+JUMP 19  
+JUMP 11  
+IPRT a  
+IADD t3 a b
+IASN c -1 
+IASN a -1 
+IASN b -1 
+JUMP 5  
+HALT   

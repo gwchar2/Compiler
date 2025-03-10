@@ -1,16 +1,13 @@
 #include "../include/AST/ControlFlow/ASTBreakNode.h"
 
+/*****************************/
+/******** BREAK NODE *********/
+/*****************************/
 
-ASTBreakNode::ASTBreakNode() : ASTNode(NodeType::BREAK_STMT), breakAddress(0) {}
+/* Constructor */
+ASTBreakNode::ASTBreakNode(int line_number) : ASTNode(NodeType::BREAK_STMT, line_number){}
 
+/* Visitor */
 void ASTBreakNode::accept(ASTVisitor& visitor) { 
     visitor.visit(*this);
-}
-
-void ASTBreakNode::setBreakAddress(int address){
-    breakAddress = address;
-}
-
-int ASTBreakNode::getBreakAddress(){
-    return breakAddress;
 }

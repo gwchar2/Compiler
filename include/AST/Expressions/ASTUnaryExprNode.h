@@ -3,17 +3,16 @@
 
 #include "../Base/ASTNode.h"
 #include "../Base/ASTVisitor.h"
-#include "../../header.h"
 
 
 class ASTUnaryExprNode : public ASTNode {
     public:
-        ASTUnaryExprNode(ASTNode* operand);     // Constructor
-        void accept(ASTVisitor& visitor) override;      // Visitor constructor
-        ASTNode* getOperand() const;                 // Gets the operand 
-
+        ASTUnaryExprNode(ASTNode* operand,int line);                // Constructor
+        void accept(ASTVisitor& visitor) override;                  // Visitor constructor
+        ASTNode* getOperand() const;                                // Gets the operand 
+    
     private:
-        ASTNode* operand;                           // Holds the function
+        ASTNode* operand;                                           // Holds the operand
         std::string temp;
 };
 

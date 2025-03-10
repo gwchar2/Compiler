@@ -1,0 +1,92 @@
+IASN t0 2 
+IPRT t0  
+IASN t0 3 
+IPRT t0  
+IASN t0 5 
+IASN a 5 
+IASN t0 38 
+ILSS t2 5 38
+IEQL t3 5 38
+IADD t1 t2 t3
+INQL t1 t1 0
+JMPZ 42 t1 
+IASN t0 2 
+IASN b 2 
+IASN t0 1 
+IASN stop 1 
+IMLT t0 stop a
+IASN t2 2 
+IDIV t3 t0 t2
+ILSS t2 b t3
+JMPZ 33 t2 
+IDIV t3 a b
+IMLT t0 t3 b
+IEQL t3 t0 a
+JMPZ 29 t3 
+IASN t0 0 
+IASN stop 0 
+JUMP 29  
+IASN t3 1 
+IADD t0 b t3
+IASN b 3 
+JUMP 17  
+IASN t2 1 
+IEQL t0 stop t2
+JMPZ 38 t0 
+IPRT a  
+JUMP 38  
+IASN t0 2 
+IADD t2 a t0
+IASN a 7 
+JUMP 7  
+RINP inp  
+RASN t6 3.142 
+RMLT t7 inp t6
+IASN t2 180 
+ITOR t6 180 
+RDIV t8 t7 t6
+RASN inp 0.000 
+IASN t1 0 
+ITOR t8 t1 
+RASN prevsine t8 
+RASN cursine 0.000 
+IASN t1 1 
+ITOR t8 t1 
+RASN loopnum t8 
+RASN power 0.000 
+IASN t1 1 
+ITOR t8 t1 
+RASN sign t8 
+RASN t8 0.000 
+RLSS t1 t8 power
+IASN t0 200 
+ITOR t8 200 
+RLSS t0 loopnum t8
+IMLT t2 0 1
+INQL t3 t2 0
+JMPZ 91 t3 
+IASN t0 2 
+ITOR t8 2 
+RADD t6 loopnum t8
+RASN loopnum 3.000 
+RMLT t6 power inp
+RMLT t8 t6 inp
+IASN t1 1 
+ITOR t6 1 
+RSUB t7 loopnum t6
+RMLT t6 loopnum t7
+RDIV t7 t8 t6
+RASN power 0.000 
+RASN prevsine 0.000 
+IASN t0 0 
+IASN t1 1 
+ISUB t4 t0 t1
+ITOR t7 -1 
+RMLT t6 sign t7
+RASN sign -1.000 
+RMLT t6 sign power
+RADD t7 cursine t6
+RASN cursine 0.000 
+JUMP 60  
+RPRT cursine  
+HALT   

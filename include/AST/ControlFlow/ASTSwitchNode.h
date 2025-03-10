@@ -4,8 +4,6 @@
 
 #include "../Base/ASTNode.h"
 #include "../Statements/ASTStatementListNode.h"
-#include <vector>
-#include <utility>
 
 /*
 switch_stmt:
@@ -23,21 +21,20 @@ class ASTCaseListNode;
 class ASTSwitchNode : public ASTNode {
     public:
         //Constructor
-        ASTSwitchNode(ASTNode* condition, ASTCaseListNode* caseList, ASTStatementListNode* defaultCase);
+        ASTSwitchNode(ASTNode* condition, ASTCaseListNode* caseList, ASTStatementListNode* defaultCase,int line);       // Constructor 
         
-        void accept(ASTVisitor& visitor) override;  // Visitor constructor
+        void accept(ASTVisitor& visitor) override;                                                                      // Visitor
 
-        ASTNode* getCondition() const;                                                          // gets the loop condition
-        ASTCaseListNode* getCaseList() const;                                                       // case list for switch
-        ASTStatementListNode* getDefaultCase() const;                                   // gets default case
-        int getBreakAddress() const;                                             // gets the exit address
+        ASTNode* getCondition() const;                                                                                  // gets the loop condition
+        ASTCaseListNode* getCaseList() const;                                                                           // case list for switch
+        ASTStatementListNode* getDefaultCase() const;                                                                   // gets default case
 
 
     private:
-        ASTNode* condition;                                                     // Loop condition
-        ASTCaseListNode* caseList;           // Case list
-        ASTStatementListNode* defaultCase;                                              // Default Case
-        int break_address;                                                       // Exit address for break / end of switch
+        ASTNode* condition;                                                                                             // Loop condition
+        ASTCaseListNode* caseList;                                                                                      // Case list
+        ASTStatementListNode* defaultCase;                                                                              // Default Case
+        int break_address;                                                                                              // Exit address for break / end of switch
 
 };
 

@@ -11,12 +11,9 @@ break_stmt:
 */
 class ASTBreakNode : public ASTNode {
     public:
-        ASTBreakNode();                             // Empty constructor, break node is just a symbolic node
-        void accept(ASTVisitor& visitor) override;      // visitor
-        void setBreakAddress(int address);
-        int getBreakAddress();
-    private:
-        int breakAddress;
+        ASTBreakNode(int line);                             // Empty constructor, break node is just a symbolic node
+        void accept(ASTVisitor& visitor) override;          // visitor
+        
 };
 
 #endif 

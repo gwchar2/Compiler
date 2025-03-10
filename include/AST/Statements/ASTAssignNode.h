@@ -7,15 +7,15 @@
 
 class ASTAssignNode : public ASTNode {
     public:
-        ASTAssignNode(const std::string& id, ASTNode* expression);  // Constructor
-        void accept(ASTVisitor& visitor) override;                  // Visitor func constructor
+        ASTAssignNode(const std::string& id, ASTNode* expression,int line);         // Constructor
+        void accept(ASTVisitor& visitor) override;                                  // Visitor func
 
-        const std::string& getID() const;                           // Get left side
-        ASTNode* getExpression() const;                             // Get right side
+        const std::string& getID() const;                                           // Get left side
+        ASTNode* getExpression() const;                                             // Get right side
 
     private:
-        std::string id;                                            // Left side of expression
-        ASTNode* expression;                                             // Right side of expression
+        std::string id;                                                             // Left side of expression
+        ASTNode* expression;                                                        // Right side of expression
 };
 
 

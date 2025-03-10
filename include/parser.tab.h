@@ -57,7 +57,6 @@ extern int yydebug;
     extern int line_number;
     extern int yychar;
     extern char* yytext;
-    extern char* unput;
     #define yyerrok         (yyerrstatus = 0)
     extern int yylex(void);  // Ensure this matches your lexer function
     void yyerror(const char *s);
@@ -72,7 +71,7 @@ extern int yydebug;
         } val;                      // Holds the value (float or int)
     } Val;
 
-#line 76 "build/parser.tab.h"
+#line 75 "build/parser.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -112,7 +111,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 29 "src/parser.y"
+#line 28 "src/parser.y"
                             // For integers & floats (NUM)
     Val val;
     char* strval;                   // For identifiers (ID) and possibly keywords
@@ -125,7 +124,7 @@ union YYSTYPE
     ASTBlockNode* blockNode;
 
 
-#line 129 "build/parser.tab.h"
+#line 128 "build/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

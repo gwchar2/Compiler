@@ -3,21 +3,22 @@
 
 #include "../Base/ASTNode.h"
 #include "../Base/ASTVisitor.h"
-#include <variant>
 
 /* Represents a Literal Node */
 class ASTLiteralNode : public ASTNode {
     public:
-        ASTLiteralNode(int value);         // Constructor1
-        ASTLiteralNode(float value);        // Constructor2
-        void accept(ASTVisitor& visitor) override;
+        ASTLiteralNode(int value,int line);                                     // Int Constructor
+        ASTLiteralNode(float value,int line);                                   // Float Constructor
+        void accept(ASTVisitor& visitor) override;                              // Visitor 
 
-        std::variant<int, float> getValue() const;
-        std::string getValueAsString() const;
-        bool isInt() const;
-        bool isFloat() const;
+        std::variant<int, float> getValue() const;                              // Returns the value of the node 
+        std::string getValueAsString() const;                                   // Returns value as a string 
+        bool isInt() const;                                                     // Bools for returning class type quickly
+        bool isFloat() const;                                                   // Bools for returning class type quickly
+    
     private:
-        std::variant<int, float> value;                                     // Holds the value of the literal
+        std::variant<int, float> value;                                         // Holds the value of the literal
+        DataType type;
 
 };
 

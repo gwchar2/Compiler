@@ -12,13 +12,13 @@ output_stmt:
 
 class ASTOutputNode : public ASTNode {
     public:
-        ASTOutputNode(ASTNode* expression);             // Output Constructor
-        void accept(ASTVisitor& visitor) override;      // Visitor constructor
+        ASTOutputNode(ASTNode* expression,int line_number);             // Output Constructor
+        void accept(ASTVisitor& visitor) override;                      // Visitor constructor
         
-        ASTNode* getExpression() const;             // Gets the expresion
+        ASTNode* getExpression() const;                                 // Gets the expresion
 
     private:
-        ASTNode* expression;                        // Holds the expression
+        ASTNode* expression;                                            // Holds the expression
 };
 
 

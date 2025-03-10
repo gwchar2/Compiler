@@ -1,0 +1,17 @@
+IINP first  
+IINP second  
+IASN t0 0 
+IASN count 0 
+IGRT t1 0 0
+IEQL t2 0 0
+IADD t0 t1 t2
+INQL t0 t0 0
+JMPZ 16 t0 
+ISUB t2 first second
+IASN first 0 
+IASN t2 1 
+IADD t3 count t2
+IASN count 1 
+JUMP 5  
+IPRT count  
+HALT   

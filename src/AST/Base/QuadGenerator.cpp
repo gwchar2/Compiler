@@ -1,25 +1,16 @@
 #include "../include/AST/Base/QuadGenerator.h"
-#include <iostream>
-#include <iomanip>
-#include <map>
-#include <vector>
 /*****************************************/
-/* Visiter Funcs for traversing the AST */
-/***************************************/
+/* Visiter Funcs for traversing the AST  */
+/*****************************************/
 /* Prints the instructions */
-void QuadGenerator::printQuad(){
-    int rowNumber = 1;
+void QuadGenerator::printQuad(std::ostream& out){
     for (const auto& instruction : instructions)
-        std::cout << rowNumber++ << "|     " << instruction.toString() << std::endl;
+        out << instruction.toString() << std::endl;
 }
 
 /* Generates the Quad code top-down */
 void QuadGenerator::generateQuad(ASTProgramRoot* root){
-    try {
-        root -> accept(*this);
-    } catch (const std::exception & e) {
-        std::cerr << e.what() << std::endl;
-    }
+    if (root) root -> accept(*this);
     instructions.emplace_back(QuadOp::HALT);            // Adds HALT command to the commands vector (Last command of program)
 }
 
@@ -45,7 +36,6 @@ void QuadGenerator::visit(ASTBlockNode& node){
 void QuadGenerator::visit(ASTStatementListNode& node) {
     for (ASTNode* stmt : node.getStatements()){
         if (stmt) {
-            instructions.emplace_back(QuadOp::EMPTY);
             stmt -> accept(*this);
         }
     }
@@ -54,31 +44,27 @@ void QuadGenerator::visit(ASTStatementListNode& node) {
 /* Input Node visitor */
 /* input(ID) */
 void QuadGenerator::visit(ASTInputNode& node) {
-    /* We search to see if the string in the input(X) is legal (has to be a declared variable) */
-    if (!globalScope.exists(node.getID()))
-        throw std::runtime_error("Error: The ID "+node.getID()+" is undeclared!");
-    else if (globalScope.getSymbol(node.getID()).getType() == DataType::FLOAT) 
+    if (globalScope.getSymbol(node.getID()).getType() == DataType::FLOAT) 
         instructions.emplace_back(QuadOp::RINP,node.getID());
     else instructions.emplace_back(QuadOp::IINP,node.getID());
 
 }
-
 
 /* output(expression)*/
 /* Expression can be either : 
     - ASTBinaryExprNode (exp ADDOP term)
     - ASTBinaryExprNode (term MULOP factor)
     - ASTCastExprNode  / ASTIdentifierNode / ASTLiteralNode */
-void QuadGenerator::visit(ASTOutputNode& node) {
+void QuadGenerator::visit(ASTOutputNode& node) {	
     /* We first visit the node */
-    node.getExpression() -> accept(*this);
+    if(node.getExpression()) node.getExpression() -> accept(*this);
     Symbol& temp = globalScope.getSymbol(node.getExpression() -> getTemp());
 
     /* Get the temp holding the result, and print it according to type */
     if (node.getExpression() -> getType() == ASTNode::NodeType::LITERAL){
         if (temp.getType() == DataType::FLOAT)
-            instructions.emplace_back(QuadOp::RPRT,temp.valStr());
-        else instructions.emplace_back(QuadOp::IPRT,temp.valStr());
+            instructions.emplace_back(QuadOp::RPRT,temp.getName());
+        else instructions.emplace_back(QuadOp::IPRT,temp.getName());
     }else{
         if (temp.getType() == DataType::FLOAT)
             instructions.emplace_back(QuadOp::RPRT,temp.getName());
@@ -88,9 +74,11 @@ void QuadGenerator::visit(ASTOutputNode& node) {
 
 }
 
+/* Visits if/else nodes. First traverses the condition, than makes code for main block and else.
+After it makes the code, it returns and changes the placeholders with return address & else address */
 void QuadGenerator::visit(ASTIfNode& node) {
     /* We visit the condition first */
-    node.getCondition() -> accept(*this);
+    if (node.getCondition()) node.getCondition() -> accept(*this);
     
     /* We save a placeholder for jumping to else bracket if condition is not met. */
     instructions.emplace_back(QuadOp::JMPZ, "placeholder");
@@ -123,12 +111,14 @@ void QuadGenerator::visit(ASTIfNode& node) {
 
 }
 
+/* While node generator. It first generates the code of the condition, and adds a placeholder for the end of the code 
+After generating the main block, it returns to specific address and places the exact address for a jump. */
 void QuadGenerator::visit(ASTWhileNode& node) {
     /* We keep a placeholder for the condition */
     int condition = instructions.size()+1;
 
     /* We visit the condition first */
-    node.getCondition() -> accept(*this);
+    if(node.getCondition()) node.getCondition() -> accept(*this);
 
     /* We add a placeholder jump to the end of the while loop - when we break out of the condition */
     instructions.emplace_back(QuadOp::JMPZ,"placeholder");
@@ -137,7 +127,7 @@ void QuadGenerator::visit(ASTWhileNode& node) {
 
     /* We now traverse the while loop while adding new scopes */
     globalScope.pushScope();
-    node.getBody() -> accept(*this);
+    if (node.getBody()) node.getBody() -> accept(*this);
     globalScope.popScope();
 
     /* We need to add a jump back to the condition, and point the condition break address to here. */
@@ -159,20 +149,48 @@ void QuadGenerator::visit(ASTWhileNode& node) {
     globalScope.releaseTemp(node.getBody() -> getTemp());
 }
 
+/* Case list node generator. */
 void QuadGenerator::visit(ASTCaseListNode& node) {
-    // TODO: Implement case list handling
-}
+    int i = 0;
+    if (!node.getCases().empty()){
+        /* We traverse the pair <Literal, Statement List >*/
+        for (auto& pair : node.getCases()) {
+            ASTLiteralNode* caseValue = pair.first;
+            ASTStatementListNode* caseBody = pair.second;
 
+            /* We receive the value of the case */
+            if (caseValue) caseValue->accept(*this);
+            std::string caseTemp = caseValue->getTemp();
+            std::string calcResult = globalScope.newTemp(DataType::INT);
+
+            
+            /* We compare the switch statement with the specific case. 
+                If the case is not equal, we jump to next case.
+                If case is equal, we perform the code. If the code has a break, we will break.
+                If not, we will continue going! */
+            instructions.emplace_back(QuadOp::IEQL, calcResult, switchTemp, caseTemp);
+            instructions.emplace_back(QuadOp::JMPZ, casePlaceHolders[i + 1].first, calcResult);
+
+            /* We implement a new scope and perform the case */
+            globalScope.pushScope();
+            if (caseBody) caseBody -> accept(*this);
+            globalScope.popScope();
+
+            /* We store the address of the end of the case, for jumping purposes. */
+            casePlaceHolders[i + 1].second = instructions.size() + 1;
+            i++;
+        }
+    }
+}
+/* Traverses each case and generates the code, 
+later on returns to the beginning and fills in the correct jump addresses. */
 void QuadGenerator::visit(ASTSwitchNode& node) {
     /* Entering a switch automatically enters a scope */
     globalScope.pushScope();
     /* We start with the condition for the switch */
-    node.getCondition() -> accept(*this);
+    if (node.getCondition()) node.getCondition() -> accept(*this);
     std::string switchTemp = node.getCondition() -> getTemp();
     int initial_value = instructions.size()-1;
-    /* A vector of pairs - placeholder & address*/
-    std::vector<std::pair<std::string,int>> casePlaceHolders;
-    int i = 0;
     
     /* Make a unique place holder for each case with default -1 value for placeholders */
     int numCases = node.getCaseList()->getCases().size();
@@ -183,45 +201,19 @@ void QuadGenerator::visit(ASTSwitchNode& node) {
 
     /* We make sure that the case temp is an int and not a float!! */
     if (globalScope.getSymbol(switchTemp).getType() == DataType::FLOAT){
-        std::string temp = switchTemp;
+		std::string temp = switchTemp;
         switchTemp = globalScope.newTemp(DataType::INT);
         instructions.emplace_back(QuadOp::RTOI,switchTemp,globalScope.getSymbol(temp).valStr());
         globalScope.releaseTemp(temp);
     }
     
-    
-    i = 0;
-    for (auto& pair : node.getCaseList() -> getCases()){
-        ASTLiteralNode* caseValue = pair.first;
-        ASTStatementListNode* caseBody = pair.second;
-
-        /* We visit the case and get the value into a temp var */
-        caseValue -> accept(*this);
-        std::string caseTemp = caseValue -> getTemp();
-        std::string calcResult = globalScope.newTemp(DataType::INT);
-
-        /* We compare the switch statement with the specific case. 
-            If the case is not equal, we jump to next case.
-            If case is equal, we perform the code. If the code has a break, we will break.
-            If not, we will continue going! */
-        instructions.emplace_back(QuadOp::IEQL,calcResult,switchTemp,caseTemp);
-        instructions.emplace_back(QuadOp::JMPZ, casePlaceHolders[i+1].first, calcResult);
-        
-        /* Implement new scope for case */
-        globalScope.pushScope();
-        caseBody -> accept(*this);
-        globalScope.popScope();
-
-        /* Save the address of next case */
-        casePlaceHolders[i+1].second = instructions.size()+1;
-
-        i++;
-    }
+	/* We visit the case list now */
+	node.getCaseList() -> accept(*this);
 
     /* Now that we are done, we are left only with putting the default value */
     if (node.getDefaultCase()){
         globalScope.pushScope();
-        node.getDefaultCase() -> accept(*this);
+        if (node.getDefaultCase()) node.getDefaultCase() -> accept(*this);
         globalScope.popScope();
     }
 
@@ -249,24 +241,31 @@ void QuadGenerator::visit(ASTBinaryExprNode& node) {
     ASTNode* lhs = node.getLeft();
     ASTNode* rhs = node.getRight();
 
-    lhs -> accept(*this);
-    rhs -> accept(*this);
+    if (lhs) lhs -> accept(*this);
+    if (rhs) rhs -> accept(*this);
     /* We now need to do type checking to see if they are both same types and than calculate result into result temp*/
 
     /* Perform the type checking & update to new reference */
-    typeConvertion(lhs,rhs);
+    typeConversion(lhs,rhs);
     /* Now we perform the operation and save the result as intended */   
     performOperation(node, globalScope.getSymbol(lhs -> getTemp()), globalScope.getSymbol(rhs -> getTemp()));
 
-
+    /* If there was a need for type conversion, we must return the nodes to the true value. */
+    if (lhs -> getType() == ASTNode::NodeType::IDENTIFIER && dynamic_cast<ASTIdentifierNode*>(lhs) -> isCasted()){
+        lhs -> setTemp(dynamic_cast<ASTIdentifierNode*>(lhs) -> getName());
+        dynamic_cast<ASTIdentifierNode*>(lhs) -> setCasted(false);
+    }
+    if (rhs -> getType() == ASTNode::NodeType::IDENTIFIER && dynamic_cast<ASTIdentifierNode*>(rhs) -> isCasted()) {
+        rhs -> setTemp(dynamic_cast<ASTIdentifierNode*>(rhs) -> getName());
+        dynamic_cast<ASTIdentifierNode*>(rhs) -> setCasted(false);
+    }
 }   
 
 /* If !(float) -> FLOAT will be transfered to INT before the NOT operation */
 void QuadGenerator::visit(ASTUnaryExprNode& node) {
-    ASTNode* expression = node.getOperand();
-    expression -> accept(*this);
+    if (node.getOperand()) node.getOperand() -> accept(*this);
     
-    Symbol& expr = globalScope.getSymbol(expression->getTemp());
+    Symbol& expr = globalScope.getSymbol(node.getOperand()->getTemp());
     int exprVal = (expr.getType() == DataType::INT) 
                     ? std::get<int>(expr.getVal()) 
                     : static_cast<int>(std::get<float>(expr.getVal()));
@@ -298,7 +297,7 @@ RTOI A E     A:= integer(E)
 */
 void QuadGenerator::visit(ASTCastExprNode& node) {
     /* We first visit the operand */
-    node.getOperand() -> accept(*this);
+    if (node.getOperand()) node.getOperand() -> accept(*this);
     /* Handle the cast */
     if (node.getCastType() == ActionType::ACTION_CASTFLOAT){
         node.setTemp(globalScope.newTemp(DataType::FLOAT));
@@ -335,7 +334,7 @@ Afterwords we will calculate the assign together with the temporary value.
 void QuadGenerator::visit(ASTAssignNode& node) {
 
     /* First we visit the expression */
-    node.getExpression() -> accept(*this);
+    if (node.getExpression()) node.getExpression() -> accept(*this);
     Symbol& lhs = globalScope.getSymbol(node.getID());
     Symbol& rhs = globalScope.getSymbol(node.getExpression() -> getTemp());
     /* If we assign into a float, everything is possible */
@@ -343,7 +342,7 @@ void QuadGenerator::visit(ASTAssignNode& node) {
         /* if RHS is a float, we just assign it */
         if (rhs.getType() == DataType::FLOAT){
             lhs.setVal(rhs.getVal());
-            instructions.emplace_back(QuadOp::RASN,lhs.getName(),rhs.getName());
+            instructions.emplace_back(QuadOp::RASN,lhs.getName(),rhs.valStr());
         }else {
             /* We need to convert the int to a float first */
             std::string temp = globalScope.newTemp(DataType::FLOAT);
@@ -360,7 +359,7 @@ void QuadGenerator::visit(ASTAssignNode& node) {
         /* If RHS is an INT we just assign it */
         if (rhs.getType() == DataType::INT){
             lhs.setVal(rhs.getVal());
-            instructions.emplace_back(QuadOp::IASN,lhs.getName(),rhs.getName()); 
+            instructions.emplace_back(QuadOp::IASN,lhs.getName(),rhs.valStr()); 
         } else {
             /* We need to convert the float to an int */
             std::string temp = globalScope.newTemp(DataType::INT);
@@ -382,13 +381,8 @@ void QuadGenerator::visit(ASTAssignNode& node) {
 
 /* Checks if the ID Exists. If not, runtime error. If does, we save the temp name as it. */
 void QuadGenerator::visit(ASTIdentifierNode& node) {
-    if (!globalScope.exists(node.getName())){
-        node.setTemp("");
-        throw std::runtime_error("Error!: The identifier " + node.getName() + " does not exist!");
-    }
     node.setTemp(node.getName());
 }
-
 
 /* We first search if such a symbol already exists with same value before doing any commands */
 void QuadGenerator::visit(ASTLiteralNode& node) {
@@ -407,7 +401,7 @@ void QuadGenerator::visit(ASTLiteralNode& node) {
 /***********************************/
 
 /* Handles the convertion of one of the temporaries to int or float */
-void QuadGenerator::typeConvertion(ASTNode* lhsNode, ASTNode* rhsNode){
+void QuadGenerator::typeConversion(ASTNode* lhsNode, ASTNode* rhsNode){
     /* Converts the right hand side to float */
     if (globalScope.getSymbol(lhsNode->getTemp()).getType() == DataType::FLOAT 
         && globalScope.getSymbol(rhsNode->getTemp()).getType() == DataType::INT){
@@ -424,9 +418,13 @@ void QuadGenerator::typeConvertion(ASTNode* lhsNode, ASTNode* rhsNode){
             
         
         /* Transfer the data from old temp to converted temp */
-        std::variant<int,float> val = static_cast<float>(std::get<int>(globalScope.getSymbol(old_temp).getVal()));            // save new data
+        std::variant<int,float> val = static_cast<float>(std::get<int>(globalScope.getSymbol(old_temp).getVal()));            
         globalScope.getSymbol(rhsNode->getTemp()).setVal(val);
-        globalScope.releaseTemp(old_temp);
+
+        /* If the nodes are not identifiers, we can release the temporaries they are holding. 
+        If they are, we can not release the "temporary" because it is a predefined variable!! */
+        if (rhsNode -> getType() != ASTNode::NodeType::IDENTIFIER) globalScope.releaseTemp(old_temp);
+        else dynamic_cast<ASTIdentifierNode*>(rhsNode) -> setCasted(true);
     } 
     /* Converts the left hand side to float */
     else if (globalScope.getSymbol(lhsNode->getTemp()).getType() == DataType::INT 
@@ -443,14 +441,19 @@ void QuadGenerator::typeConvertion(ASTNode* lhsNode, ASTNode* rhsNode){
             instructions.emplace_back(QuadOp::ITOR, lhsNode -> getTemp(), globalScope.getSymbol(old_temp).valStr());
         
         /* Transfer the data from old temp to converted temp */
-        std::variant<int,float> val = static_cast<float>(std::get<int>(globalScope.getSymbol(old_temp).getVal()));            // save new data
-        globalScope.getSymbol(lhsNode->getTemp()).setVal(val);                                                                          // set new data
-        globalScope.releaseTemp(old_temp);
+        std::variant<int,float> val = static_cast<float>(std::get<int>(globalScope.getSymbol(old_temp).getVal()));            
+        globalScope.getSymbol(lhsNode->getTemp()).setVal(val);                                                                          
+        
+        /* If the nodes are not identifiers, we can release the temporaries they are holding. 
+        If they are, we can not release the "temporary" because it is a predefined variable!! */
+        if (lhsNode -> getType() != ASTNode::NodeType::IDENTIFIER) globalScope.releaseTemp(old_temp);
+        else dynamic_cast<ASTIdentifierNode*>(lhsNode) -> setCasted(true);
     }
 }
 
-
+/* Performs the correct operation (Places the correct code on the stack) */
 void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol, Symbol& rhsSymbol){
+
     node.setTemp((lhsSymbol.getType() == DataType::FLOAT && node.getOperator() > 8) 
             ? globalScope.newTemp(DataType::FLOAT) 
             : globalScope.newTemp(DataType::INT));

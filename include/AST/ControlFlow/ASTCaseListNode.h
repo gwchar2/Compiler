@@ -3,7 +3,6 @@
 
 #include "../Base/ASTNode.h"
 #include "../Base/ASTVisitor.h"
-#include <vector>
 class ASTStatementListNode;
 class ASTLiteralNode;
 /*
@@ -18,7 +17,7 @@ class ASTCaseListNode : public ASTNode {
         void addCase(ASTLiteralNode* caseValue, ASTStatementListNode* statements);                      // Adding a case to the node
         const std::vector<std::pair<ASTLiteralNode*, ASTStatementListNode*>>& getCases() const;         // List of cases
 
-        void accept(ASTVisitor& visitor) override;
+        void accept(ASTVisitor& visitor)  override;
     private:
         std::vector<std::pair<ASTLiteralNode*, ASTStatementListNode*>> cases;                           // List of <Case # , Case >
 

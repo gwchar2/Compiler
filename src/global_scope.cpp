@@ -2,6 +2,10 @@
 #include "../include/symbol_table.h"
 GlobalScope globalScope;
 
+/***********************************/
+/***** Global Scope Functions ******/
+/***********************************/
+
 
 /* Adds a scope to the stack */
 void GlobalScope::pushScope() {
@@ -74,7 +78,7 @@ std::string GlobalScope::getSymbolByValue(const std::variant<int, float>& val) c
     return "";  
 }
 
-/* Creates a new temp */
+/* Creates a new temp - takes from correct stack of empties (if there are any empty) */
 std::string GlobalScope::newTemp(DataType type){
     if (type == DataType::INT) {
         if (!intTemps.empty()) {
@@ -108,6 +112,8 @@ void GlobalScope::releaseTemp(const std::string& temp){
     }
 }
 
+
+/* Prints the scope at the moment. Mostly for debugging */
 void GlobalScope::printTable(){
     std::cout << "\n === Symbol Tables in Global Scope ===\n";
     for (size_t i = 0 ; i < scopeStack.size(); i ++) {

@@ -3,18 +3,17 @@
 
 #include "../Base/ASTNode.h"
 #include "../Base/ASTVisitor.h"
-#include <vector>
 
 class ASTStatementListNode : public ASTNode {
-public:
-    ASTStatementListNode();                                     // Constructor
-    void accept(ASTVisitor& visitor) override;                 // Visitor 
+    public:
+        ASTStatementListNode();                                         // Constructor
+        void accept(ASTVisitor& visitor) override;                      // Visitor 
 
-    void addStatement(ASTNode* stmt);                           // Add a statement to the list
-    const std::vector<ASTNode*>& getStatements() const;         // gets the statements list 
+        void addStatement(ASTNode* stmt);                               // Add a statement to the list
+        const std::vector<ASTNode*>& getStatements() const;             // gets the statements list 
 
-private:
-    std::vector<ASTNode*> statements;                          // List of statements
+    private:
+        std::vector<ASTNode*> statements;                               // List of statements
 };
 
 #endif

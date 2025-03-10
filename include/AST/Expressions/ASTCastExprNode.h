@@ -9,14 +9,17 @@
 class ASTCastExprNode : public ASTNode {
     public :
 
-        ASTCastExprNode(ActionType castType, ASTNode* operand);           // Constructor
-        void accept(ASTVisitor& visitor) override;                      // Visitor constructor
+        ASTCastExprNode(ActionType castType, ASTNode* operand,int line);             // Constructor
+        void accept(ASTVisitor& visitor) override;                                   // Visitor constructor
 
-        ActionType getCastType() const;                                   // Gets the type of cast func
-        ASTNode* getOperand() const;                                    // Gets operand
+        ActionType getCastType() const;                                              // Gets the type of cast func
+        ASTNode* getOperand() const;                                                 // Gets operand
+        DataType getDataType() const;
+        void setDataType(DataType datatype);
     private:
-        ActionType castType;                                              // Holds the cast type
-        ASTNode* operand;                                               // Holds the operand
+        ActionType castType;                                                         // Holds the cast type
+        ASTNode* operand;                                                            // Holds the operand
+        DataType type;
 };
 
 

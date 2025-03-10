@@ -8,7 +8,7 @@ int comment_nesting = 0;
 /* Macros to define regular expressions */
 %option yylineno
 %option noyywrap 
-RELOP     (\<=|\>=|\<|\>|\=\!|\=\=)
+RELOP     (\<=|\>=|\<|\>|\!\=|\=\=)
 ADDOP     (\+|\-)
 MULOP     (\*|\/)
 OR        (\|\|)
@@ -104,7 +104,7 @@ WHITESPACE [ \t\r]+
     return FLOAT; 
     }
 {SAVED_REGISTER} {
-    fprintf(stderr,"Invalid register name, {%s} is a saved register!\n",yytext);
+    fprintf(stderr, RED "Lexical Error" RESET " in line %d: Invalid variable name %s. tX are saved registers!\n",line_number, yytext);
 }
 [0-9]+             { 
     yylval.val.val.intval = atoi(yytext); 
@@ -151,6 +151,5 @@ WHITESPACE [ \t\r]+
 .           { 
     fprintf(stderr, "Lexical error at line %d: Unrecognized character '%s'\n", yylineno, yytext);
 }
-
 
 %%

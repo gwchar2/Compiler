@@ -11,13 +11,11 @@ INCLUDE_DIR = include
 BUILD_DIR = build
 
 # Output executable
-TARGET = compiler.exe
+TARGET = cpq.exe
 
 # Source files
-MAIN_CPP_SRCS  = $(SRC_DIR)/main.cpp \
-           $(SRC_DIR)/errorHandler.cpp \
+MAIN_CPP_SRCS  = $(SRC_DIR)/cpq.cpp \
 		   $(SRC_DIR)/symbol_table.cpp \
-		   $(SRC_DIR)/helper_funcs.cpp \
 		   $(SRC_DIR)/global_scope.cpp 
 
 # AST Directories seperately
@@ -105,9 +103,10 @@ run: $(TARGET)
 
 # Run all test files in the test folder and append errors to error.txt
 tests: $(TARGET)
-	@> error.txt  # Clear the error.txt file before appending
-	@for file in tests/*.cpl; do \
-		echo "Running test on $$file" >> error.txt; \
-		./$(TARGET) $$file >> error.txt 2>&1; \
+	@> error.txt 
+	@for file in tests/*.ou; do \
+		filename=$$(basename $$file .ou); \  
+		echo "Running test on $$filename" >> error.txt; \
+		./$(TARGET) $$filename >> error.txt 2>&1; \  
 		echo "------------------------------" >> error.txt; \
 	done

@@ -14,13 +14,13 @@ input_stmt:
 class ASTInputNode : public ASTNode {
 
     public:
-        ASTInputNode(const std::string& id);                 // Constructor
-        void accept(ASTVisitor& visitor) override;           // Visitor constructor
+        ASTInputNode(const std::string& id,int line);                   // Constructor
+        void accept(ASTVisitor& visitor) override;                      // Visitor constructor
 
-        const std::string& getID() const;                             // Gets the ID
+        const std::string& getID() const;                               // Gets the ID
 
     private:
-        std::string id;                                     // Holds the ID
+        std::string id;                                                 // Holds the ID
 };
 
 
