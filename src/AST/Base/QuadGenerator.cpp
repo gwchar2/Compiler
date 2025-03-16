@@ -36,7 +36,7 @@ void QuadGenerator::visit(ASTBlockNode& node){
 void QuadGenerator::visit(ASTStatementListNode& node) {
     for (ASTNode* stmt : node.getStatements()){
         if (stmt) {
-            if (!instructions.empty()) instructions.emplace_back(QuadOp::EMPTY);
+            //if (!instructions.empty()) instructions.emplace_back(QuadOp::EMPTY);
             stmt -> accept(*this);
         }
     }
@@ -204,7 +204,7 @@ void QuadGenerator::visit(ASTSwitchNode& node) {
     if (globalScope.getSymbol(switchTemp).getType() == DataType::FLOAT){
 		std::string temp = switchTemp;
         switchTemp = globalScope.newTemp(DataType::INT);
-        instructions.emplace_back(QuadOp::RTOI,switchTemp,globalScope.getSymbol(temp).valStr());
+        instructions.emplace_back(QuadOp::RTOI,switchTemp,globalScope.getSymbol(temp).getName());
         globalScope.releaseTemp(temp);
     }
     
@@ -414,7 +414,7 @@ void QuadGenerator::typeConversion(ASTNode* lhsNode, ASTNode* rhsNode){
         if (rhsNode -> getType() == ASTNode::NodeType::IDENTIFIER)
             instructions.emplace_back(QuadOp::ITOR, rhsNode->getTemp(), old_temp);
         else 
-            instructions.emplace_back(QuadOp::ITOR, rhsNode->getTemp(), globalScope.getSymbol(old_temp).valStr());
+            instructions.emplace_back(QuadOp::ITOR, rhsNode->getTemp(), globalScope.getSymbol(old_temp).getName());
             
         
         /* Transfer the data from old temp to converted temp */
@@ -438,7 +438,7 @@ void QuadGenerator::typeConversion(ASTNode* lhsNode, ASTNode* rhsNode){
         if (lhsNode -> getType() == ASTNode::NodeType::IDENTIFIER)
             instructions.emplace_back(QuadOp::ITOR, lhsNode -> getTemp(), old_temp);
         else 
-            instructions.emplace_back(QuadOp::ITOR, lhsNode -> getTemp(), globalScope.getSymbol(old_temp).valStr());
+            instructions.emplace_back(QuadOp::ITOR, lhsNode -> getTemp(), globalScope.getSymbol(old_temp).getName());
         
         /* Transfer the data from old temp to converted temp */
         std::variant<int,float> val = static_cast<float>(std::get<int>(globalScope.getSymbol(old_temp).getVal()));            
@@ -510,8 +510,8 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal < rhsVal) ? 1 : 0));
                 temp2Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal == rhsVal) ? 1 : 0));
                 /* We put the instructions for less than, equal */
-                instructions.emplace_back(QuadOp::ILSS, temp1, lhsSymbol.valStr(),rhsSymbol.getName());
-                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.valStr(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::ILSS, temp1, lhsSymbol.getName(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.getName(),rhsSymbol.getName());
                 /* We calculate if temp1 + temp2 greater than 0, if yes that means that one of them at least is true */
                 instructions.emplace_back(QuadOp::IADD, node.getTemp(), temp1, temp2);
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), node.getTemp(), "0");
@@ -522,8 +522,8 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal > rhsVal) ? 1 : 0));
                 temp2Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal == rhsVal) ? 1 : 0));
                 /* We put the instructions for greater than, equal */
-                instructions.emplace_back(QuadOp::IGRT, temp1, lhsSymbol.valStr(),rhsSymbol.getName());
-                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.valStr(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::IGRT, temp1, lhsSymbol.getName(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.getName(),rhsSymbol.getName());
                 /* We calculate if temp1 + temp2 greater than 0, if yes that means that one of them at least is true */
                 instructions.emplace_back(QuadOp::IADD, node.getTemp(), temp1, temp2);
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), node.getTemp(), "0");
@@ -533,7 +533,7 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 globalScope.getSymbol(node.getTemp()).setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal || rhsVal) ? 1 : 0));  
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal + rhsVal)));
                 /* We calculate if lhs + rhs > 0 (0 = false, 1< is true ) */
-                instructions.emplace_back(QuadOp::IADD, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::IADD, temp1, lhsSymbol.getName(),rhsSymbol.getName());
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), temp1, "0");
                 break;
             }
@@ -541,7 +541,7 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 globalScope.getSymbol(node.getTemp()).setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal && rhsVal) ? 1 : 0));  
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal * rhsVal)));
                 /* We calculate if lhs * rhs != 0 (0 = false, 1< is true ) */
-                instructions.emplace_back(QuadOp::IMLT, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::IMLT, temp1, lhsSymbol.getName(),rhsSymbol.getName());
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), temp1, "0");
                 break;
             }
@@ -593,8 +593,8 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal < rhsVal) ? 1 : 0));
                 temp2Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal == rhsVal) ? 1 : 0));
                 /* We put the instructions for less than, equal */
-                instructions.emplace_back(QuadOp::RLSS, temp1, lhsSymbol.valStr(), rhsSymbol.valStr());
-                instructions.emplace_back(QuadOp::REQL, temp2, lhsSymbol.valStr(), rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::RLSS, temp1, lhsSymbol.getName(), rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::REQL, temp2, lhsSymbol.getName(), rhsSymbol.getName());
                 /* We calculate if temp1 + temp2 greater than 0, if yes that means that one of them at least is true */
                 instructions.emplace_back(QuadOp::IADD, node.getTemp(), temp1, temp2);
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), node.getTemp(), "0");
@@ -605,8 +605,8 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal > rhsVal) ? 1 : 0));
                 temp2Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal == rhsVal) ? 1 : 0));
                 /* We put the instructions for greater than, equal */
-                instructions.emplace_back(QuadOp::RGRT, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
-                instructions.emplace_back(QuadOp::REQL, temp2, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::RGRT, temp1, lhsSymbol.getName(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::REQL, temp2, lhsSymbol.getName(),rhsSymbol.getName());
                 /* We calculate if temp1 + temp2 greater than 0, if yes that means that one of them at least is true */
                 instructions.emplace_back(QuadOp::IADD, node.getTemp(), temp1, temp2);
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), node.getTemp(), "0");
@@ -616,7 +616,7 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 globalScope.getSymbol(node.getTemp()).setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal || rhsVal) ? 1 : 0)); 
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal + rhsVal)));
                 /* We calculate if lhs + rhs > 0 (0 = false, 1< is true ) */
-                instructions.emplace_back(QuadOp::RADD, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::RADD, temp1, lhsSymbol.getName(),rhsSymbol.getName());
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), temp1, "0");
                 break;
             }
@@ -624,7 +624,7 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 globalScope.getSymbol(node.getTemp()).setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal && rhsVal) ? 1 : 0));  
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal * rhsVal)));
                 /* We calculate if lhs * rhs != 0 (0 = false, 1< is true ) */
-                instructions.emplace_back(QuadOp::RMLT, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::RMLT, temp1, lhsSymbol.getName(),rhsSymbol.getName());
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), temp1, "0");
                 break;
             }

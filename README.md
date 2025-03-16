@@ -125,6 +125,12 @@ make
 ./cpq input_file
 ```
 
+### Interperting the Quad Code
+You can run your .qud file (TAC Result code) with the interperter.
+```
+python interperter/quadinter.py [file path].qud
+```
+
 # CPL Language Specification
 
 ## 1. Lexical Structure
