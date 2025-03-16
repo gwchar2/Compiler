@@ -23,6 +23,7 @@ In terminal type the commands:
 !! Critical Notes !!:
 0) The statements are printed with an 'empty command' between the blocks - for better readability.
    If you are interested in REMOVING THIS, you can go to the file src/AST/Base/QuadGenerator.cpp and note or remove line #39
+    HAVING EMPTY COMMAND SOMETIMES INTERFERES WITH INTERPERTER!!!
 
 1) Dividing a number with 0, returns 0 or 0.0 - deppending on variable type (int/float)
 
