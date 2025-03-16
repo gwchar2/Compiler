@@ -1,9 +1,8 @@
 # Compiler settings
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -g 
-LDFLAGS = -L/C/msys64/usr/lib -lfl					
-# REMEMBER TO KEEP ONLY -lfl WHEN WE ARE HANDING IN THE PROJECT!!!!
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LDFLAGS = -L/C/msys64/usr/lib -lfl			# REMEMBER TO KEEP ONLY -lfl WHEN WE ARE HANDING IN THE PROJECT!!!!		
+
 # Directories
 SRC_DIR = src
 AST_DIR = $(SRC_DIR)/AST
@@ -15,8 +14,8 @@ TARGET = cpq.exe
 
 # Source files
 MAIN_CPP_SRCS  = $(SRC_DIR)/cpq.cpp \
-		   $(SRC_DIR)/symbol_table.cpp \
-		   $(SRC_DIR)/global_scope.cpp 
+		   		 $(SRC_DIR)/symbol_table.cpp \
+		   		 $(SRC_DIR)/global_scope.cpp 
 
 # AST Directories seperately
 AST_BASE_SRCS = $(wildcard $(AST_DIR)/Base/*.cpp)
@@ -29,7 +28,6 @@ CPP_SRCS = $(MAIN_CPP_SRCS) $(AST_BASE_SRCS) $(AST_CONTROL_SRCS) $(AST_EXPR_SRCS
 
 # Object files from C++ sources
 CPP_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(CPP_SRCS))
-
 
 # Generated files
 PARSER_C = $(BUILD_DIR)/parser.tab.c
@@ -103,10 +101,8 @@ run: $(TARGET)
 
 # Run all test files in the test folder and append errors to error.txt
 tests: $(TARGET)
-	@> error.txt 
 	@for file in tests/*.ou; do \
-		filename=$$(basename $$file .ou); \  
-		echo "Running test on $$filename" >> error.txt; \
-		./$(TARGET) $$filename >> error.txt 2>&1; \  
-		echo "------------------------------" >> error.txt; \
+		echo "Running test on $$file"; \
+		./$(TARGET) $$file; \
+		echo "------------------------------"; \
 	done

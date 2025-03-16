@@ -25,7 +25,11 @@ int main(int argc, char* argv[]) {
     
     /* Gets file name & adds .ou */
     std::string filename = argv[1];  
-    std::string newFileName = filename+".ou";
+    std::string newFileName = filename;
+    /* If the file name does not end with .ou , we add it. If it does, we dont.
+        -- This is mainly for Make tests command on makefile -- */
+    if (filename.size() >= 3 && !(filename.substr(filename.size() - 3) == ".ou")) 
+        newFileName = filename+".ou";
 
     /* Opens the file, yyin needs FILE* :( */
     FILE* file = fopen(newFileName.c_str(), "r");
@@ -53,9 +57,13 @@ int main(int argc, char* argv[]) {
         QuadGenerator quadGen;
         quadGen.generateQuad(root); 
 
-        /* Set output file to filename.qud */
-        newFileName = filename+".qud"; 
-        std::cout << "Printing file to " << newFileName << std::endl;
+        /* Set output file to filename.qud ( Again, the checks are mainly for make tests command in makefile )*/
+        if (filename.size() < 3 || filename.substr(filename.size() - 3) != ".ou") {
+            newFileName = filename + ".qud";
+        } else {
+            newFileName = filename.substr(0, filename.size() - 3) + ".qud";
+        }
+        
         /* Set the stream & call for print */
         std::ofstream outFile(newFileName);
         if (outFile)

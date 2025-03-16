@@ -96,9 +96,6 @@ struct QuadInstruction {
             default: return "Unknown";
         }
     }
-
-
-
 };
 
 #endif

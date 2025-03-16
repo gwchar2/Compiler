@@ -8,6 +8,7 @@ int comment_nesting = 0;
 /* Macros to define regular expressions */
 %option yylineno
 %option noyywrap 
+%option nounput
 RELOP     (\<=|\>=|\<|\>|\!\=|\=\=)
 ADDOP     (\+|\-)
 MULOP     (\*|\/)

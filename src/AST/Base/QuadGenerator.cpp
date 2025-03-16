@@ -36,6 +36,7 @@ void QuadGenerator::visit(ASTBlockNode& node){
 void QuadGenerator::visit(ASTStatementListNode& node) {
     for (ASTNode* stmt : node.getStatements()){
         if (stmt) {
+            if (!instructions.empty()) instructions.emplace_back(QuadOp::EMPTY);
             stmt -> accept(*this);
         }
     }
@@ -279,8 +280,8 @@ void QuadGenerator::visit(ASTUnaryExprNode& node) {
         /*If it doesnt need a cast, we just set the temp to be the same temp as the expression,
         we will just assign it a new value */
         node.setTemp(expr.getName());
-    }
-                                                                                                    // Example: Row #5
+    }                                                                                               // Example:
+                                                                                                    // Row #5
     instructions.emplace_back(QuadOp::JMPZ,std::to_string(instructions.size()+4),node.getTemp());   // Row #6 : jump to 9 if equal to 0
     instructions.emplace_back(QuadOp::IASN,node.getTemp(),"0");                                     // Row #7 : assign 0 (since will be equal to 1)
     instructions.emplace_back(QuadOp::JUMP,std::to_string(instructions.size()+3));                  // Row #8 : jump to 10 
@@ -342,7 +343,7 @@ void QuadGenerator::visit(ASTAssignNode& node) {
         /* if RHS is a float, we just assign it */
         if (rhs.getType() == DataType::FLOAT){
             lhs.setVal(rhs.getVal());
-            instructions.emplace_back(QuadOp::RASN,lhs.getName(),rhs.valStr());
+            instructions.emplace_back(QuadOp::RASN,lhs.getName(),rhs.getName());
         }else {
             /* We need to convert the int to a float first */
             std::string temp = globalScope.newTemp(DataType::FLOAT);
@@ -359,7 +360,7 @@ void QuadGenerator::visit(ASTAssignNode& node) {
         /* If RHS is an INT we just assign it */
         if (rhs.getType() == DataType::INT){
             lhs.setVal(rhs.getVal());
-            instructions.emplace_back(QuadOp::IASN,lhs.getName(),rhs.valStr()); 
+            instructions.emplace_back(QuadOp::IASN,lhs.getName(),rhs.getName()); 
         } else {
             /* We need to convert the float to an int */
             std::string temp = globalScope.newTemp(DataType::INT);
@@ -388,7 +389,6 @@ void QuadGenerator::visit(ASTIdentifierNode& node) {
 void QuadGenerator::visit(ASTLiteralNode& node) {
     node.setTemp(globalScope.newTemp((node.isFloat() ? DataType::FLOAT : DataType::INT)));
 
-    /* It technically matches a temp for it, but the instruction is not shown */
     instructions.emplace_back((node.isInt() ? QuadOp::IASN : QuadOp::RASN),node.getTemp(),node.getValueAsString());
     globalScope.getSymbol(node.getTemp()).setVal(node.getValue());
 }
@@ -510,8 +510,8 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal < rhsVal) ? 1 : 0));
                 temp2Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal == rhsVal) ? 1 : 0));
                 /* We put the instructions for less than, equal */
-                instructions.emplace_back(QuadOp::ILSS, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
-                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::ILSS, temp1, lhsSymbol.valStr(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.valStr(),rhsSymbol.getName());
                 /* We calculate if temp1 + temp2 greater than 0, if yes that means that one of them at least is true */
                 instructions.emplace_back(QuadOp::IADD, node.getTemp(), temp1, temp2);
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), node.getTemp(), "0");
@@ -522,8 +522,8 @@ void QuadGenerator::performOperation(ASTBinaryExprNode& node, Symbol& lhsSymbol,
                 temp1Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal > rhsVal) ? 1 : 0));
                 temp2Symbol.setVal(std::variant<int,float>(std::in_place_type<int>,(lhsVal == rhsVal) ? 1 : 0));
                 /* We put the instructions for greater than, equal */
-                instructions.emplace_back(QuadOp::IGRT, temp1, lhsSymbol.valStr(),rhsSymbol.valStr());
-                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.valStr(),rhsSymbol.valStr());
+                instructions.emplace_back(QuadOp::IGRT, temp1, lhsSymbol.valStr(),rhsSymbol.getName());
+                instructions.emplace_back(QuadOp::IEQL, temp2, lhsSymbol.valStr(),rhsSymbol.getName());
                 /* We calculate if temp1 + temp2 greater than 0, if yes that means that one of them at least is true */
                 instructions.emplace_back(QuadOp::IADD, node.getTemp(), temp1, temp2);
                 instructions.emplace_back(QuadOp::INQL, node.getTemp(), node.getTemp(), "0");
