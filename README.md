@@ -355,7 +355,7 @@ IfStmt
 ### TAC (Three-Address Code)
 ```assembly
 IASN t0 5 
-IASN x 5 
+IASN x t0
 IASN t0 2 
 IGRT t1 x t0
 JMPZ 8 t1 
